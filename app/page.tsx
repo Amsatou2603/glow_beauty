@@ -6,10 +6,13 @@ import { TestimonialsSection } from '@/components/testimonials-section';
 import { NewsletterSection } from '@/components/newsletter-section';
 import { Footer } from '@/components/footer';
 import { CartDrawer } from '@/components/cart-drawer';
-import { supabase } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 import type { Product } from '@/lib/store';
 
 async function getProducts(): Promise<Product[]> {
+  const supabase = getSupabase();
+  if (!supabase) return [];
+
   const { data, error } = await supabase
     .from('products')
     .select('*')
