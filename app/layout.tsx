@@ -16,6 +16,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('http://localhost:3000'),
   title: 'Glow Beauty — Premium Skincare & Cosmetics',
   description: 'Discover luxury beauty rituals crafted for your radiance. Premium skincare, cosmetics, and wellness essentials.',
   openGraph: {
