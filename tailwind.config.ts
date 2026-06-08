@@ -47,6 +47,12 @@ const config: Config = {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
+        /* Liquid Glass Brand Colors */
+        'rose-glow': '#E8004D',
+        'rose-candy': '#F4A7C3',
+        'rose-soft': '#FAE4EE',
+        'dark-base': '#0f0a12',
+        'dark-card': '#1a0e1e',
         rose: {
           50: '#fff1f2',
           100: '#ffe4e6',
@@ -128,22 +134,22 @@ const config: Config = {
         'accordion-up': { from: { height: 'var(--radix-accordion-content-height)' }, to: { height: '0' } },
         float: {
           '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-12px)' },
+          '50%': { transform: 'translateY(-18px)' },
         },
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
         },
         'pulse-glow': {
-          '0%, 100%': { opacity: '1', boxShadow: '0 0 20px rgba(251, 113, 133, 0.4)' },
-          '50%': { opacity: '0.8', boxShadow: '0 0 40px rgba(251, 113, 133, 0.7)' },
+          '0%, 100%': { boxShadow: '0 0 20px rgba(232, 0, 77, 0.20)' },
+          '50%': { boxShadow: '0 0 40px rgba(232, 0, 77, 0.50)' },
         },
         'liquid-move': {
           '0%, 100%': { borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%' },
           '50%': { borderRadius: '30% 60% 70% 40% / 50% 60% 30% 60%' },
         },
         'fade-up': {
-          from: { opacity: '0', transform: 'translateY(20px)' },
+          from: { opacity: '0', transform: 'translateY(30px)' },
           to: { opacity: '1', transform: 'translateY(0)' },
         },
         'scale-in': {
@@ -153,6 +159,13 @@ const config: Config = {
         'slide-in-right': {
           from: { opacity: '0', transform: 'translateX(100%)' },
           to: { opacity: '1', transform: 'translateX(0)' },
+        },
+        blob: {
+          '0%': { transform: 'translate(0, 0) scale(1)' },
+          '25%': { transform: 'translate(20px, -30px) scale(1.05)' },
+          '50%': { transform: 'translate(-15px, 20px) scale(0.95)' },
+          '75%': { transform: 'translate(25px, 10px) scale(1.02)' },
+          '100%': { transform: 'translate(0, 0) scale(1)' },
         },
       },
       animation: {
@@ -167,6 +180,9 @@ const config: Config = {
         'fade-up': 'fade-up 0.6s ease-out forwards',
         'scale-in': 'scale-in 0.4s ease-out forwards',
         'slide-in-right': 'slide-in-right 0.4s ease-out forwards',
+        'blob-10': 'blob 10s ease-in-out infinite',
+        'blob-14': 'blob 14s ease-in-out infinite reverse',
+        'blob-16': 'blob 16s ease-in-out infinite',
       },
     },
   },

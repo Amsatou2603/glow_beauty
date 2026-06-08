@@ -24,7 +24,7 @@ export default async function Home() {
   const products = await getProducts();
 
   return (
-    <main className="min-h-screen bg-mesh-light">
+    <main className="min-h-screen relative z-10">
       <Navbar />
       <HeroSection />
       <ProductsSection products={products} />

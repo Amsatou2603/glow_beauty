@@ -53,10 +53,15 @@ export function Navbar() {
           }}
           transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
           className={cn(
-            'glass-navbar relative flex items-center justify-between',
+            'glass-frosted relative flex items-center justify-between',
             'px-5 py-3 rounded-3xl transition-all duration-500',
             scrolled ? 'py-2.5' : 'py-3.5'
           )}
+          style={{
+            background: scrolled ? 'rgba(15, 10, 18, 0.75)' : 'rgba(15, 10, 18, 0.20)',
+            backdropFilter: scrolled ? 'blur(24px) saturate(200%)' : 'blur(8px)',
+            borderBottom: scrolled ? '1px solid rgba(232, 0, 77, 0.12)' : 'none',
+          }}
         >
           {/* Shine overlay */}
           <div className="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none">
@@ -68,16 +73,16 @@ export function Navbar() {
             <motion.div
               whileHover={{ rotate: 20, scale: 1.1 }}
               transition={{ type: 'spring', stiffness: 400 }}
-              className="w-8 h-8 rounded-xl flex items-center justify-center"
+              className="w-8 h-8 rounded-full flex items-center justify-center"
               style={{
-                background: 'linear-gradient(135deg, #f9a8d4 0%, #f43f5e 100%)',
-                boxShadow: '0 4px 12px rgba(244, 63, 94, 0.35)',
+                background: 'linear-gradient(135deg, #E8004D 0%, #F4A7C3 100%)',
+                boxShadow: '0 0 16px rgba(232, 0, 77, 0.40)',
               }}
             >
               <Sparkles className="w-4 h-4 text-white" />
             </motion.div>
-            <span className="font-display font-bold text-xl text-gradient tracking-tight">
-              Glow Beauty
+            <span className="font-display font-bold text-xl tracking-tight">
+              Glow <span className="italic" style={{ color: '#F4A7C3' }}>Beauty</span>
             </span>
           </Link>
 
@@ -88,14 +93,13 @@ export function Navbar() {
                 key={link.label}
                 href={link.href}
                 className={cn(
-                  'relative px-3.5 py-1.5 text-sm font-medium rounded-xl',
-                  'text-foreground/70 hover:text-foreground',
-                  'transition-all duration-200 hover:bg-white/30 dark:hover:bg-white/8',
+                  'relative px-3.5 py-1.5 text-sm font-medium rounded-full',
+                  'text-white/75 hover:text-white',
+                  'transition-all duration-200 hover:bg-white/8',
                   'group'
                 )}
               >
                 {link.label}
-                <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-0 h-0.5 rounded-full bg-primary group-hover:w-3/4 transition-all duration-300" />
               </Link>
             ))}
           </div>
@@ -135,35 +139,37 @@ export function Navbar() {
               <Heart className="w-4 h-4" />
             </NavIconButton>
 
-            {/* Theme Toggle */}
+            {/* Theme Toggle - Neumorphic */}
             {mounted && (
-              <NavIconButton
+              <button
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                label="Changer le thème"
+                className={cn(
+                  'neumorphic-toggle',
+                  theme === 'light' ? 'light' : 'dark'
+                )}
+                aria-label="Changer le thème"
               >
-                <AnimatePresence mode="wait">
-                  {theme === 'dark' ? (
-                    <motion.div key="sun" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
-                      <Sun className="w-4 h-4" />
-                    </motion.div>
+                <div className={cn(
+                  'neumorphic-thumb',
+                  theme === 'light' ? 'light' : 'dark'
+                )}>
+                  {theme === 'light' ? (
+                    <Sun className="w-4 h-4" style={{ color: '#E8004D' }} />
                   ) : (
-                    <motion.div key="moon" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
-                      <Moon className="w-4 h-4" />
-                    </motion.div>
+                    <Moon className="w-4 h-4 text-white" />
                   )}
-                </AnimatePresence>
-              </NavIconButton>
+                </div>
+              </button>
             )}
 
             {/* Cart */}
             <motion.button
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(232, 0, 77, 0.55)' }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setCartOpen(true)}
-              className="relative flex items-center gap-2 px-4 py-1.5 rounded-2xl text-sm font-semibold text-white"
+              className="relative flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold text-white"
               style={{
-                background: 'linear-gradient(135deg, #f472b6 0%, #f43f5e 100%)',
-                boxShadow: '0 4px 16px rgba(244, 63, 94, 0.35), inset 0 1px 0 rgba(255,255,255,0.2)',
+                background: '#E8004D',
               }}
             >
               <ShoppingBag className="w-4 h-4" />
@@ -213,7 +219,11 @@ export function Navbar() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.97 }}
               transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-              className="absolute top-full left-4 right-4 mt-2 glass-navbar rounded-3xl p-4 md:hidden"
+              className="absolute top-full left-4 right-4 mt-2 glass-frosted rounded-3xl p-4 md:hidden"
+              style={{
+                background: 'rgba(15, 10, 18, 0.75)',
+                backdropFilter: 'blur(24px) saturate(200%)',
+              }}
             >
               {NAV_LINKS.map((link, i) => (
                 <motion.div
@@ -225,7 +235,7 @@ export function Navbar() {
                   <Link
                     href={link.href}
                     onClick={() => setMobileOpen(false)}
-                    className="block px-4 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground rounded-xl hover:bg-white/30 dark:hover:bg-white/8 transition-all"
+                    className="block px-4 py-2.5 text-sm font-medium text-white/80 hover:text-white rounded-full hover:bg-white/8 transition-all"
                   >
                     {link.label}
                   </Link>

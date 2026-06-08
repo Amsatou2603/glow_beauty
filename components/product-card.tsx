@@ -34,11 +34,23 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.5, delay: index * 0.07, ease: [0.34, 1.56, 0.64, 1] }}
-      className="glass-card rounded-3xl overflow-hidden group relative flex flex-col"
+      className="glass-frosted rounded-[20px] overflow-hidden group relative flex flex-col product-shimmer"
+      style={{
+        transition: 'all 0.3s ease',
+      }}
+      whileHover={{
+        translateY: -4,
+        borderColor: 'rgba(232, 0, 77, 0.30)',
+        boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)',
+      }}
     >
       {/* Image container */}
       <div className="relative overflow-hidden rounded-2xl m-3 mb-0">
-        <div className="product-image-glass aspect-[3/4] relative overflow-hidden">
+        <div className="aspect-[3/4] relative overflow-hidden" style={{
+          background: 'linear-gradient(135deg, rgba(253, 242, 248, 0.9) 0%, rgba(252, 231, 243, 0.8) 100%)',
+          backdropFilter: 'blur(12px)',
+          borderRadius: '1.25rem',
+        }}>
           <motion.img
             src={product.image_url}
             alt={product.name}
@@ -58,7 +70,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           <motion.button
             initial={{ opacity: 0, y: 10 }}
             whileHover={{ opacity: 1, y: 0 }}
-            className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-4 py-2 glass rounded-xl text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-all"
+            className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-4 py-2 glass-frosted rounded-xl text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-all"
           >
             <Eye className="w-3.5 h-3.5" />
             Aperçu rapide
@@ -72,7 +84,11 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: 'spring', stiffness: 400, delay: 0.2 + index * 0.07 }}
-              className="badge-glass px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase text-emerald-600 dark:text-emerald-400"
+              className="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase"
+              style={{
+                background: 'rgba(244, 167, 195, 0.15)',
+                color: '#F4A7C3',
+              }}
             >
               Nouveau
             </motion.span>
@@ -82,14 +98,18 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: 'spring', stiffness: 400, delay: 0.25 + index * 0.07 }}
-              className="badge-glass px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase text-rose-500 dark:text-rose-400"
+              className="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase"
+              style={{
+                background: 'rgba(232, 0, 77, 0.15)',
+                color: '#E8004D',
+              }}
             >
               Best-seller
             </motion.span>
           )}
           {discount && (
             <span className="px-2.5 py-1 rounded-full text-[10px] font-bold text-white"
-              style={{ background: 'linear-gradient(135deg, #f43f5e, #db2777)' }}>
+              style={{ background: '#E8004D' }}>
               -{discount}%
             </span>
           )}
@@ -100,7 +120,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           whileHover={{ scale: 1.15 }}
           whileTap={{ scale: 0.85 }}
           onClick={() => setWishlisted(!wishlisted)}
-          className="absolute top-3 right-3 w-8 h-8 glass-button rounded-xl flex items-center justify-center"
+          className="absolute top-3 right-3 w-8 h-8 glass-frosted rounded-xl flex items-center justify-center"
         >
           <AnimatePresence mode="wait">
             <motion.div
@@ -118,10 +138,10 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
 
       {/* Content */}
       <div className="flex flex-col flex-1 p-4 pt-3">
-        <p className="text-[11px] font-semibold tracking-widest uppercase text-foreground/40 mb-1">
+        <p className="text-[11px] font-semibold tracking-widest uppercase text-white/40 mb-1">
           {product.brand}
         </p>
-        <h3 className="font-semibold text-sm leading-snug text-foreground/90 mb-1.5 line-clamp-2 flex-1">
+        <h3 className="font-semibold text-sm leading-snug text-white/90 mb-1.5 line-clamp-2 flex-1">
           {product.name}
         </h3>
 
@@ -137,20 +157,20 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                     ? 'fill-amber-400 text-amber-400'
                     : i < product.rating
                     ? 'fill-amber-200 text-amber-200'
-                    : 'text-foreground/15 fill-foreground/15'
+                    : 'text-white/15 fill-white/15'
                 )}
               />
             ))}
           </div>
-          <span className="text-[11px] text-foreground/45">({product.review_count})</span>
+          <span className="text-[11px] text-white/45">({product.review_count})</span>
         </div>
 
         {/* Price + CTA */}
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-baseline gap-1.5">
-            <span className="text-base font-bold text-gradient">€{product.price}</span>
+            <span className="text-base font-bold text-white" style={{ fontWeight: 600 }}>€{product.price}</span>
             {product.original_price && (
-              <span className="text-xs text-foreground/35 line-through">€{product.original_price}</span>
+              <span className="text-xs text-white/35 line-through">€{product.original_price}</span>
             )}
           </div>
 
@@ -159,7 +179,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             whileTap={{ scale: 0.93 }}
             onClick={handleAddToCart}
             className={cn(
-              'flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-300',
+              'flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold transition-all duration-300',
               addedToCart
                 ? 'text-white scale-105'
                 : 'text-white'
@@ -167,10 +187,10 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             style={{
               background: addedToCart
                 ? 'linear-gradient(135deg, #10b981, #059669)'
-                : 'linear-gradient(135deg, #f472b6 0%, #f43f5e 100%)',
+                : '#E8004D',
               boxShadow: addedToCart
                 ? '0 4px 16px rgba(16, 185, 129, 0.35)'
-                : '0 4px 16px rgba(244, 63, 94, 0.3)',
+                : '0 4px 16px rgba(232, 0, 77, 0.3)',
             }}
           >
             <AnimatePresence mode="wait">
