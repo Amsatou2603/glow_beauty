@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, ShoppingBag, Heart, MapPin, Settings, LogOut, ChevronRight, Sparkles } from 'lucide-react';
+import { User, ShoppingBag, Heart, MapPin, Settings, LogOut, ChevronRight, Sparkles, Home } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -61,6 +61,7 @@ export default function AccountPage() {
   if (authLoading || !user) return <div className="min-h-screen pt-24 pb-16 px-4 flex justify-center"><Sparkles className="w-8 h-8 animate-spin text-rose-500" /></div>;
 
   const menuItems = [
+    { id: 'home', label: 'Accueil', icon: Home, href: '/' },
     { id: 'profile', label: 'Mon profil', icon: User, href: '/account/profile' },
     { id: 'orders', label: 'Mes commandes', icon: ShoppingBag, href: '/account/orders' },
     { id: 'wishlist', label: 'Ma liste d\'envies', icon: Heart, href: '/account/wishlist' },

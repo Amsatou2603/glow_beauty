@@ -1,21 +1,29 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, Heart, Star, Eye } from 'lucide-react';
+import { ShoppingBag, Heart, Star, Eye, Edit, Trash2 } from 'lucide-react';
 import { useCartStore, type Product } from '@/lib/store';
 import { cn } from '@/lib/utils';
+import { isAdmin } from '@/lib/admin';
 
 interface ProductCardProps {
   product: Product;
   index?: number;
+  onEdit?: (product: Product) => void;
+  onDelete?: (productId: string) => void;
 }
 
-export function ProductCard({ product, index = 0 }: ProductCardProps) {
+export function ProductCard({ product, index = 0, onEdit, onDelete }: ProductCardProps) {
   const [wishlisted, setWishlisted] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [is_admin, setIsAdmin] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
   const setCartOpen = useCartStore((s) => s.setOpen);
+
+  useEffect(() => {
+    isAdmin().then(setIsAdmin);
+  }, []);
 
   const handleAddToCart = () => {
     addItem(product);
@@ -134,6 +142,28 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             </motion.div>
           </AnimatePresence>
         </motion.button>
+
+        {/* Admin buttons */}
+        {is_admin && (
+          <div className="absolute bottom-3 right-3 flex gap-2">
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => onEdit?.(product)}
+              className="w-8 h-8 glass-frosted rounded-xl flex items-center justify-center text-rose-500 hover:bg-rose-500/20 transition-colors"
+            >
+              <Edit className="w-4 h-4" />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => onDelete?.(product.id)}
+              className="w-8 h-8 glass-frosted rounded-xl flex items-center justify-center text-rose-500 hover:bg-rose-500/20 transition-colors"
+            >
+              <Trash2 className="w-4 h-4" />
+            </motion.button>
+          </div>
+        )}
       </div>
 
       {/* Content */}

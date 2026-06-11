@@ -17,6 +17,7 @@ export interface Product {
   ingredients?: string;
   is_new?: boolean;
   is_bestseller?: boolean;
+  in_stock?: boolean;
 }
 
 export interface CartItem extends Product {
