@@ -7,54 +7,70 @@ ALTER TABLE public.wishlist ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
 
 -- Users table policies
+DROP POLICY IF EXISTS "Users can view own profile" ON public.users;
 CREATE POLICY "Users can view own profile" ON public.users
   FOR SELECT USING (auth.uid() = id OR (SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
+DROP POLICY IF EXISTS "Users can update own profile" ON public.users;
 CREATE POLICY "Users can update own profile" ON public.users
   FOR UPDATE USING (auth.uid() = id OR (SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
+DROP POLICY IF EXISTS "Service role can insert users" ON public.users;
 CREATE POLICY "Service role can insert users" ON public.users
   FOR INSERT WITH CHECK (auth.role() = 'service_role');
 
+DROP POLICY IF EXISTS "Admin can view all users" ON public.users;
 CREATE POLICY "Admin can view all users" ON public.users
   FOR SELECT USING ((SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
+DROP POLICY IF EXISTS "Admin can update any user" ON public.users;
 CREATE POLICY "Admin can update any user" ON public.users
   FOR UPDATE USING ((SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
+DROP POLICY IF EXISTS "Admin can delete users" ON public.users;
 CREATE POLICY "Admin can delete users" ON public.users
   FOR DELETE USING ((SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
 -- Profiles table policies
+DROP POLICY IF EXISTS "Users can view own profile" ON public.profiles;
 CREATE POLICY "Users can view own profile" ON public.profiles
   FOR SELECT USING (auth.uid() = id OR (SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
+DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
 CREATE POLICY "Users can update own profile" ON public.profiles
   FOR UPDATE USING (auth.uid() = id OR (SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
+DROP POLICY IF EXISTS "Service role can insert profiles" ON public.profiles;
 CREATE POLICY "Service role can insert profiles" ON public.profiles
   FOR INSERT WITH CHECK (auth.role() = 'service_role');
 
+DROP POLICY IF EXISTS "Admin can view all profiles" ON public.profiles;
 CREATE POLICY "Admin can view all profiles" ON public.profiles
   FOR SELECT USING ((SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
 -- Orders table policies
+DROP POLICY IF EXISTS "Users can view own orders" ON public.orders;
 CREATE POLICY "Users can view own orders" ON public.orders
   FOR SELECT USING (auth.uid() = user_id OR (SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
+DROP POLICY IF EXISTS "Users can create own orders" ON public.orders;
 CREATE POLICY "Users can create own orders" ON public.orders
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Admin can view all orders" ON public.orders;
 CREATE POLICY "Admin can view all orders" ON public.orders
   FOR SELECT USING ((SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
+DROP POLICY IF EXISTS "Admin can update any order" ON public.orders;
 CREATE POLICY "Admin can update any order" ON public.orders
   FOR UPDATE USING ((SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
+DROP POLICY IF EXISTS "Admin can delete orders" ON public.orders;
 CREATE POLICY "Admin can delete orders" ON public.orders
   FOR DELETE USING ((SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
 -- Order items table policies
+DROP POLICY IF EXISTS "Users can view own order items" ON public.order_items;
 CREATE POLICY "Users can view own order items" ON public.order_items
   FOR SELECT USING (
     EXISTS (
@@ -64,6 +80,7 @@ CREATE POLICY "Users can view own order items" ON public.order_items
     )
   );
 
+DROP POLICY IF EXISTS "Users can create order items for own orders" ON public.order_items;
 CREATE POLICY "Users can create order items for own orders" ON public.order_items
   FOR INSERT WITH CHECK (
     EXISTS (
@@ -73,44 +90,57 @@ CREATE POLICY "Users can create order items for own orders" ON public.order_item
     )
   );
 
+DROP POLICY IF EXISTS "Admin can view all order items" ON public.order_items;
 CREATE POLICY "Admin can view all order items" ON public.order_items
   FOR SELECT USING ((SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
+DROP POLICY IF EXISTS "Admin can delete order items" ON public.order_items;
 CREATE POLICY "Admin can delete order items" ON public.order_items
   FOR DELETE USING ((SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
 -- Wishlist table policies
+DROP POLICY IF EXISTS "Users can view own wishlist" ON public.wishlist;
 CREATE POLICY "Users can view own wishlist" ON public.wishlist
   FOR SELECT USING (auth.uid() = user_id OR (SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
+DROP POLICY IF EXISTS "Users can add to own wishlist" ON public.wishlist;
 CREATE POLICY "Users can add to own wishlist" ON public.wishlist
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete from own wishlist" ON public.wishlist;
 CREATE POLICY "Users can delete from own wishlist" ON public.wishlist
   FOR DELETE USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Admin can view all wishlists" ON public.wishlist;
 CREATE POLICY "Admin can view all wishlists" ON public.wishlist
   FOR SELECT USING ((SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
+DROP POLICY IF EXISTS "Admin can delete any wishlist item" ON public.wishlist;
 CREATE POLICY "Admin can delete any wishlist item" ON public.wishlist
   FOR DELETE USING ((SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
 -- Reviews table policies
+DROP POLICY IF EXISTS "Users can view all reviews" ON public.reviews;
 CREATE POLICY "Users can view all reviews" ON public.reviews
   FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Users can create own reviews" ON public.reviews;
 CREATE POLICY "Users can create own reviews" ON public.reviews
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update own reviews" ON public.reviews;
 CREATE POLICY "Users can update own reviews" ON public.reviews
   FOR UPDATE USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete own reviews" ON public.reviews;
 CREATE POLICY "Users can delete own reviews" ON public.reviews
   FOR DELETE USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Admin can update any review" ON public.reviews;
 CREATE POLICY "Admin can update any review" ON public.reviews
   FOR UPDATE USING ((SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
+DROP POLICY IF EXISTS "Admin can delete any review" ON public.reviews;
 CREATE POLICY "Admin can delete any review" ON public.reviews
   FOR DELETE USING ((SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
@@ -132,6 +162,7 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Trigger to handle new user signup
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();

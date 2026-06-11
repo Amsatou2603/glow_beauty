@@ -24,6 +24,7 @@ ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 -- INSERT / UPDATE / DELETE are intentionally omitted: the service_role key
 -- (used only server-side) bypasses RLS, so backend admin operations still work
 -- while no authenticated end-user can mutate products.
+DROP POLICY IF EXISTS "select_products" ON products;
 CREATE POLICY "select_products" ON products FOR SELECT
   TO anon, authenticated USING (true);
 

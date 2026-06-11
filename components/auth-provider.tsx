@@ -22,11 +22,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   
-  const { setUserId, syncWithSupabase, clearCart } = useCartStore((state) => ({
-    setUserId: state.setUserId,
-    syncWithSupabase: state.syncWithSupabase,
-    clearCart: state.clearCart
-  }));
+  const setUserId = useCartStore((state) => state.setUserId);
+  const syncWithSupabase = useCartStore((state) => state.syncWithSupabase);
+  const clearCart = useCartStore((state) => state.clearCart);
 
   useEffect(() => {
     const {

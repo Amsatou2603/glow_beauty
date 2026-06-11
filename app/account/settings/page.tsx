@@ -1,12 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { User, Mail, Lock, Bell, Shield, CreditCard, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/components/auth-provider';
 import { supabase } from '@/lib/supabase';
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sparkles } from 'lucide-react';
 
