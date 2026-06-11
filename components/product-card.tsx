@@ -6,6 +6,7 @@ import { ShoppingBag, Heart, Star, Eye, Edit, Trash2 } from 'lucide-react';
 import { useCartStore, type Product } from '@/lib/store';
 import { cn } from '@/lib/utils';
 import { isAdmin } from '@/lib/admin';
+import Link from 'next/link';
 
 interface ProductCardProps {
   product: Product;
@@ -37,21 +38,28 @@ export function ProductCard({ product, index = 0, onEdit, onDelete }: ProductCar
     : null;
 
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.5, delay: index * 0.07, ease: [0.34, 1.56, 0.64, 1] }}
-      className="glass-frosted rounded-[20px] overflow-hidden group relative flex flex-col product-shimmer"
-      style={{
-        transition: 'all 0.3s ease',
-      }}
-      whileHover={{
-        translateY: -4,
-        borderColor: 'rgba(232, 0, 77, 0.30)',
-        boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)',
-      }}
-    >
+    <Link href={`/product/${product.id}`}>
+      <motion.article
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-50px' }}
+        transition={{ duration: 0.5, delay: index * 0.07, ease: [0.34, 1.56, 0.64, 1] }}
+        className="glass-frosted rounded-[20px] overflow-hidden group relative flex flex-col product-shimmer"
+        style={{
+          transition: 'all 0.3s ease',
+        }}
+        whileHover={{
+          translateY: -4,
+          borderColor: 'rgba(232, 0, 77, 0.30)',
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)',
+        }}
+        onClick={(e) => {
+          // Prevent navigation when clicking admin buttons or add to cart
+          if ((e.target as HTMLElement).closest('button')) {
+            e.preventDefault();
+          }
+        }}
+      >
       {/* Image container */}
       <div className="relative overflow-hidden rounded-2xl m-3 mb-0">
         <div className="aspect-[3/4] relative overflow-hidden" style={{
@@ -254,5 +262,6 @@ export function ProductCard({ product, index = 0, onEdit, onDelete }: ProductCar
         </div>
       </div>
     </motion.article>
+    </Link>
   );
 }
