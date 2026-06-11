@@ -10,7 +10,12 @@ export interface AdminUser {
 
 export async function isAdmin(): Promise<boolean> {
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return false;
+  if (!user) {
+    console.log('isAdmin: No user found');
+    return false;
+  }
+
+  console.log('isAdmin: Checking role for user', user.id);
 
   const { data, error } = await supabase
     .from('users')
@@ -18,7 +23,17 @@ export async function isAdmin(): Promise<boolean> {
     .eq('id', user.id)
     .single();
 
-  if (error || !data) return false;
+  if (error) {
+    console.error('isAdmin: Error checking role', error);
+    return false;
+  }
+
+  if (!data) {
+    console.log('isAdmin: No user data found in users table');
+    return false;
+  }
+
+  console.log('isAdmin: User role is', data.role);
   return data.role === 'admin';
 }
 
