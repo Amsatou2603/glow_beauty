@@ -2,11 +2,13 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, Sun, Moon, Search, Menu, X, Sparkles, Heart, User } from 'lucide-react';
+import { ShoppingBag, Sun, Moon, Search, Menu, X, Sparkles, Heart, User, Shield } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useCartStore } from '@/lib/store';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { useAuth } from '@/components/auth-provider';
+import { isAdmin } from '@/lib/admin';
 
 const NAV_LINKS = [
   { label: 'Skincare', href: '/shop/skincare' },
@@ -40,9 +42,11 @@ export function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [is_admin, setIsAdmin] = useState(false);
   const itemCount = useCartStore((s) => s.itemCount());
   const setCartOpen = useCartStore((s) => s.setOpen);
   const searchRef = useRef<HTMLInputElement>(null);
+  const { user } = useAuth();
 
   const filteredProducts = searchQuery
     ? SEARCH_PRODUCTS.filter(product =>
@@ -57,6 +61,14 @@ export function Navbar() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const adminStatus = await isAdmin();
+      setIsAdmin(adminStatus);
+    };
+    checkAdmin();
+  }, [user]);
 
   useEffect(() => {
     if (searchOpen) searchRef.current?.focus();
@@ -223,7 +235,7 @@ export function Navbar() {
             </Link>
 
             {/* Profile */}
-            <Link href="/account">
+            <Link href="/account" className="relative">
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
@@ -231,6 +243,15 @@ export function Navbar() {
               >
                 <User className="w-5 h-5" />
               </motion.button>
+              {is_admin && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-rose-500 flex items-center justify-center"
+                >
+                  <Shield className="w-3 h-3 text-white" />
+                </motion.div>
+              )}
             </Link>
 
             {/* Cart */}

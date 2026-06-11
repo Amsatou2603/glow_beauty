@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, ShoppingBag, Heart, MapPin, Settings, LogOut, ChevronRight, Sparkles, Home } from 'lucide-react';
+import { User, ShoppingBag, Heart, MapPin, Settings, LogOut, ChevronRight, Sparkles, Home, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/auth-provider';
 import { supabase } from '@/lib/supabase';
 import { useEffect } from 'react';
+import { isAdmin } from '@/lib/admin';
 
 export default function AccountPage() {
   const router = useRouter();
@@ -16,6 +17,8 @@ export default function AccountPage() {
   const [activeTab, setActiveTab] = useState('profile');
   const [stats, setStats] = useState({ orders: 0, pending: 0, wishlist: 0 });
   const [lastOrder, setLastOrder] = useState<any>(null);
+  const [is_admin, setIsAdmin] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -31,12 +34,14 @@ export default function AccountPage() {
         { count: ordersCount },
         { count: pendingCount },
         { count: wishlistCount },
-        { data: lastOrders }
+        { data: lastOrders },
+        { data: userData }
       ] = await Promise.all([
         supabase.from('orders').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
         supabase.from('orders').select('*', { count: 'exact', head: true }).eq('user_id', user.id).in('status', ['pending', 'processing']),
         supabase.from('wishlist').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
-        supabase.from('orders').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(1)
+        supabase.from('orders').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(1),
+        supabase.from('users').select('role').eq('id', user.id).single()
       ]);
 
       setStats({
@@ -47,6 +52,11 @@ export default function AccountPage() {
 
       if (lastOrders && lastOrders.length > 0) {
         setLastOrder(lastOrders[0]);
+      }
+
+      if (userData) {
+        setUserRole(userData.role);
+        setIsAdmin(userData.role === 'admin');
       }
     };
 
@@ -135,10 +145,21 @@ export default function AccountPage() {
                   style={{ background: 'linear-gradient(135deg, #E8004D 0%, #F4A7C3 100%)' }}>
                   <Sparkles className="w-10 h-10 text-white" />
                 </div>
-                <div>
-                  <h2 className="font-display text-2xl font-bold text-foreground">
-                    {user.user_metadata?.full_name || 'Utilisateur'}
-                  </h2>
+                <div className="flex-1">
+                  <div className="flex items-center gap-3">
+                    <h2 className="font-display text-2xl font-bold text-foreground">
+                      {user.user_metadata?.full_name || 'Utilisateur'}
+                    </h2>
+                    {userRole && (
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
+                        userRole === 'admin' 
+                          ? 'bg-rose-500/20 text-rose-500' 
+                          : 'bg-foreground/10 text-foreground/60'
+                      }`}>
+                        {userRole}
+                      </span>
+                    )}
+                  </div>
                   <p className="text-foreground/65">{user.email}</p>
                 </div>
               </div>
