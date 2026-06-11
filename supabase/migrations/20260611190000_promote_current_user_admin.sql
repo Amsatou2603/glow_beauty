@@ -5,11 +5,13 @@
 -- This will insert the user if they don't exist yet
 INSERT INTO public.users (id, email, full_name, role)
 SELECT 
-  auth.uid(),
-  auth.email(),
-  auth.user_metadata()->>'full_name',
+  au.id,
+  au.email,
+  COALESCE(au.raw_user_meta_data->>'full_name', 'Admin'),
   'admin'
-WHERE NOT EXISTS (
+FROM auth.users au
+WHERE au.id = auth.uid()
+AND NOT EXISTS (
   SELECT 1 FROM public.users WHERE id = auth.uid()
 );
 
