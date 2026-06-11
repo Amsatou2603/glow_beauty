@@ -33,11 +33,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Glow Beauty',
     description: 'Discover luxury beauty rituals crafted for your radiance.',
-    images: [{ url: 'https://bolt.new/static/og_default.png' }],
+    images: [{ url: '/icon-512x512.png' }],
   },
   twitter: {
     card: 'summary_large_image',
-    images: [{ url: 'https://bolt.new/static/og_default.png' }],
+    images: [{ url: '/icon-512x512.png' }],
   },
 };
 
