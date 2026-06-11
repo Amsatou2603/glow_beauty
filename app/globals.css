@@ -58,10 +58,6 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
   html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
@@ -69,7 +65,8 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
@@ -98,47 +95,38 @@
 }
 
 @layer components {
-  /* Liquid Glass Card System - 3 Levels */
-  
-  /* Level 1: Frosted (products, navbar) */
-  .glass-frosted {
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  /* Glass Effect - Uniform blur everywhere */
+  .glass-frosted,
+  .glass-clear,
+  .glass-blur {
+    backdrop-filter: blur(40px) saturate(180%) brightness(1.1);
+    -webkit-backdrop-filter: blur(40px) saturate(180%) brightness(1.1);
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 1), 0 1px 2px rgba(0, 0, 0, 0.02);
   }
 
-  .dark .glass-frosted {
+  .dark .glass-frosted,
+  .dark .glass-clear,
+  .dark .glass-blur {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.12);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
 
-  /* Level 2: Clear (testimonials, badges) */
-  .glass-clear {
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.35);
+  /* Cart drawer — more opaque glass for better readability */
+  .glass-cart {
+    backdrop-filter: blur(60px) saturate(200%) brightness(1.05);
+    -webkit-backdrop-filter: blur(60px) saturate(200%) brightness(1.05);
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1), 0 1px 2px rgba(0, 0, 0, 0.02);
   }
 
-  .dark .glass-clear {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-  }
-
-  /* Level 3: Blur (light sections, newsletter) */
-  .glass-blur {
-    backdrop-filter: blur(40px);
-    -webkit-backdrop-filter: blur(40px);
-    background: rgba(255, 255, 255, 0.65);
-    border: 1px solid rgba(244, 167, 195, 0.30);
-  }
-
-  .dark .glass-blur {
-    background: rgba(26, 14, 30, 0.80);
-    border: 1px solid rgba(244, 167, 195, 0.20);
+  .dark .glass-cart {
+    background: rgba(15, 10, 18, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.40), inset 0 1px 0 rgba(255, 255, 255, 0.06);
   }
 
   /* Gradient text */

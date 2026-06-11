@@ -5,24 +5,24 @@ import { Star, Quote } from 'lucide-react';
 
 const TESTIMONIALS = [
   {
-    name: 'Sophie M.',
-    handle: '@sophieglow',
+    name: 'Amina D.',
+    handle: '@aminadiallo',
     avatar: 'https://images.pexels.com/photos/3762453/pexels-photo-3762453.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&dpr=2',
     text: 'Le Sérum Éclat a littéralement transformé ma peau en deux semaines. Ma peau est lumineuse, hydratée et les taches ont clairement diminué. Je ne peux plus m\'en passer !',
     rating: 5,
     product: 'Sérum Éclat Rose',
   },
   {
-    name: 'Camille R.',
-    handle: '@camillebeauty',
+    name: 'Khadija B.',
+    handle: '@khadijab',
     avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&dpr=2',
     text: 'La Crème Velours est exactement ce dont ma peau mature avait besoin. Texture divine, absorption rapide et résultats anti-âge visibles dès la première semaine.',
     rating: 5,
     product: 'Crème Velours Anti-Âge',
   },
   {
-    name: 'Léa T.',
-    handle: '@leaskincarelife',
+    name: 'Fatou M.',
+    handle: '@fatoum',
     avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&dpr=2',
     text: 'J\'ai enfin trouvé un parfum qui me correspond vraiment. Fleur de Sakura est subtil, enveloppant, et tient toute la journée. Un vrai coup de coeur !',
     rating: 5,
@@ -58,11 +58,11 @@ export function TestimonialsSection() {
         transition={{ duration: 0.6 }}
         className="text-center mb-14 relative z-10"
       >
-        <h2 className="font-display text-4xl sm:text-5xl font-bold text-white mb-4">
+        <h2 className="font-display text-4xl sm:text-5xl font-bold text-foreground mb-4">
           Elles témoignent de leur{' '}
           <span className="text-gradient">éclat</span>
         </h2>
-        <p className="text-white/65 text-lg">Plus de 28 000 clientes font confiance à Glow Beauty.</p>
+        <p className="text-foreground/65 text-lg">Plus de 28 000 clientes font confiance à Glow Beauty.</p>
       </motion.div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 relative z-10">
@@ -87,8 +87,8 @@ export function TestimonialsSection() {
                 <img src={avatar} alt={name} className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-white/90">{name}</p>
-                <p className="text-xs text-white/40">{handle}</p>
+                <p className="text-sm font-semibold text-foreground/90">{name}</p>
+                <p className="text-xs text-foreground/40">{handle}</p>
               </div>
             </div>
 
@@ -98,10 +98,10 @@ export function TestimonialsSection() {
               ))}
             </div>
 
-            <p className="text-sm text-white/65 leading-relaxed flex-1">&ldquo;{text}&rdquo;</p>
+            <p className="text-sm text-foreground/65 leading-relaxed flex-1">&ldquo;{text}&rdquo;</p>
 
             <div className="flex items-center gap-1.5">
-              <span className="text-[10px] glass-clear px-2.5 py-1 rounded-full text-white/50 font-medium">
+              <span className="text-[10px] glass-clear px-2.5 py-1 rounded-full text-foreground/50 font-medium">
                 {product}
               </span>
             </div>

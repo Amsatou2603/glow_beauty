@@ -2,18 +2,35 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, Sun, Moon, Search, Menu, X, Sparkles, Heart } from 'lucide-react';
+import { ShoppingBag, Sun, Moon, Search, Menu, X, Sparkles, Heart, User } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useCartStore } from '@/lib/store';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
 const NAV_LINKS = [
-  { label: 'Skincare', href: '#skincare' },
-  { label: 'Makeup', href: '#makeup' },
-  { label: 'Fragrance', href: '#fragrance' },
-  { label: 'Wellness', href: '#wellness' },
-  { label: 'Nouveautés', href: '#new' },
+  { label: 'Skincare', href: '/shop/skincare' },
+  { label: 'Makeup', href: '/shop/makeup' },
+  { label: 'Fragrance', href: '/shop/fragrance' },
+  { label: 'Wellness', href: '/shop/wellness' },
+  { label: 'Nouveautés', href: '/shop/new' },
+];
+
+const SEARCH_PRODUCTS = [
+  { id: '1', name: 'Sérum Éclat Hyaluronique', category: 'Skincare', href: '/shop/skincare' },
+  { id: '2', name: 'Crème Velours Nuit', category: 'Skincare', href: '/shop/skincare' },
+  { id: '3', name: 'Gel Nettoyant Doux', category: 'Skincare', href: '/shop/skincare' },
+  { id: '4', name: 'Masque Détox Argile', category: 'Skincare', href: '/shop/skincare' },
+  { id: '5', name: 'Huile Précieuse Rose', category: 'Skincare', href: '/shop/skincare' },
+  { id: '6', name: 'Rouge à Lèvres Velours', category: 'Makeup', href: '/shop/makeup' },
+  { id: '7', name: 'Fond de Teint Lumineux', category: 'Makeup', href: '/shop/makeup' },
+  { id: '8', name: 'Palette Ombres à Paupières', category: 'Makeup', href: '/shop/makeup' },
+  { id: '9', name: 'Mascara Volume Extrême', category: 'Makeup', href: '/shop/makeup' },
+  { id: '10', name: 'Parfum Rose Éternelle', category: 'Parfum', href: '/shop/fragrance' },
+  { id: '11', name: 'Parfum Bois Mystique', category: 'Parfum', href: '/shop/fragrance' },
+  { id: '12', name: 'Huile de Massage Relaxante', category: 'Wellness', href: '/shop/wellness' },
+  { id: '13', name: 'Bain Moussant Lavande', category: 'Wellness', href: '/shop/wellness' },
+  { id: '14', name: 'Bougie Parfumée Zen', category: 'Wellness', href: '/shop/wellness' },
 ];
 
 export function Navbar() {
@@ -26,6 +43,13 @@ export function Navbar() {
   const itemCount = useCartStore((s) => s.itemCount());
   const setCartOpen = useCartStore((s) => s.setOpen);
   const searchRef = useRef<HTMLInputElement>(null);
+
+  const filteredProducts = searchQuery
+    ? SEARCH_PRODUCTS.filter(product =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.category.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
 
   useEffect(() => {
     setMounted(true);
@@ -58,7 +82,6 @@ export function Navbar() {
             scrolled ? 'py-2.5' : 'py-3.5'
           )}
           style={{
-            background: scrolled ? 'rgba(15, 10, 18, 0.75)' : 'rgba(15, 10, 18, 0.20)',
             backdropFilter: scrolled ? 'blur(24px) saturate(200%)' : 'blur(8px)',
             borderBottom: scrolled ? '1px solid rgba(232, 0, 77, 0.12)' : 'none',
           }}
@@ -94,8 +117,8 @@ export function Navbar() {
                 href={link.href}
                 className={cn(
                   'relative px-3.5 py-1.5 text-sm font-medium rounded-full',
-                  'text-white/75 hover:text-white',
-                  'transition-all duration-200 hover:bg-white/8',
+                  'text-foreground/75 hover:text-foreground dark:text-white/75 dark:hover:text-white',
+                  'transition-all duration-200 hover:bg-white/8 dark:hover:bg-white/8',
                   'group'
                 )}
               >
@@ -107,37 +130,63 @@ export function Navbar() {
           {/* Actions */}
           <div className="flex items-center gap-1.5">
             {/* Search */}
-            <AnimatePresence mode="wait">
-              {searchOpen ? (
-                <motion.div
-                  key="search-input"
-                  initial={{ width: 0, opacity: 0 }}
-                  animate={{ width: 180, opacity: 1 }}
-                  exit={{ width: 0, opacity: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="overflow-hidden"
-                >
-                  <input
-                    ref={searchRef}
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onBlur={() => { if (!searchQuery) setSearchOpen(false); }}
-                    placeholder="Rechercher..."
-                    className="w-full bg-white/40 dark:bg-white/8 backdrop-blur-sm border border-white/50 dark:border-white/12 rounded-xl px-3 py-1.5 text-sm outline-none focus:border-primary/40 text-foreground placeholder:text-foreground/40"
-                  />
-                </motion.div>
-              ) : (
-                <NavIconButton key="search-btn" onClick={() => setSearchOpen(true)} label="Rechercher">
-                  <Search className="w-4 h-4" />
-                </NavIconButton>
-              )}
-            </AnimatePresence>
+            <div className="relative">
+              <AnimatePresence mode="wait">
+                {searchOpen ? (
+                  <motion.div
+                    key="search-input"
+                    initial={{ width: 0, opacity: 0 }}
+                    animate={{ width: 280, opacity: 1 }}
+                    exit={{ width: 0, opacity: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="overflow-hidden"
+                  >
+                    <input
+                      ref={searchRef}
+                      type="text"
+                      id="search-input"
+                      name="search"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onBlur={() => { setTimeout(() => { if (!searchQuery) setSearchOpen(false); }, 200); }}
+                      placeholder="Rechercher..."
+                      className="w-full bg-white/40 dark:bg-white/8 backdrop-blur-sm border border-foreground/50 dark:border-white/12 rounded-xl px-3 py-1.5 text-sm outline-none focus:border-primary/40 text-foreground placeholder:text-foreground/40"
+                    />
+                  </motion.div>
+                ) : (
+                  <NavIconButton key="search-btn" onClick={() => setSearchOpen(true)} label="Rechercher">
+                    <Search className="w-4 h-4" />
+                  </NavIconButton>
+                )}
+              </AnimatePresence>
 
-            {/* Wishlist */}
-            <NavIconButton onClick={() => {}} label="Favoris" className="hidden sm:flex">
-              <Heart className="w-4 h-4" />
-            </NavIconButton>
+              {/* Search results dropdown */}
+              <AnimatePresence>
+                {searchOpen && filteredProducts.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute top-full right-0 mt-2 w-80 glass-frosted rounded-2xl p-2 shadow-xl z-50"
+                  >
+                    {filteredProducts.map((product) => (
+                      <Link
+                        key={product.id}
+                        href={product.href}
+                        onClick={() => {
+                          setSearchOpen(false);
+                          setSearchQuery('');
+                        }}
+                        className="block px-3 py-2 rounded-xl hover:bg-foreground/5 transition-colors"
+                      >
+                        <div className="text-sm font-medium text-foreground">{product.name}</div>
+                        <div className="text-xs text-foreground/60">{product.category}</div>
+                      </Link>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
             {/* Theme Toggle - Neumorphic */}
             {mounted && (
@@ -156,11 +205,33 @@ export function Navbar() {
                   {theme === 'light' ? (
                     <Sun className="w-4 h-4" style={{ color: '#E8004D' }} />
                   ) : (
-                    <Moon className="w-4 h-4 text-white" />
+                    <Moon className="w-4 h-4 text-foreground dark:text-white" />
                   )}
                 </div>
               </button>
             )}
+
+            {/* Wishlist */}
+            <Link href="/account/wishlist">
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="hidden md:flex w-10 h-10 rounded-full items-center justify-center glass-frosted text-foreground/70 hover:text-foreground transition-colors"
+              >
+                <Heart className="w-5 h-5" />
+              </motion.button>
+            </Link>
+
+            {/* Profile */}
+            <Link href="/account">
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="hidden md:flex w-10 h-10 rounded-full items-center justify-center glass-frosted text-foreground/70 hover:text-foreground transition-colors"
+              >
+                <User className="w-5 h-5" />
+              </motion.button>
+            </Link>
 
             {/* Cart */}
             <motion.button
@@ -219,11 +290,7 @@ export function Navbar() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.97 }}
               transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-              className="absolute top-full left-4 right-4 mt-2 glass-frosted rounded-3xl p-4 md:hidden"
-              style={{
-                background: 'rgba(15, 10, 18, 0.75)',
-                backdropFilter: 'blur(24px) saturate(200%)',
-              }}
+              className="absolute top-full left-4 right-4 mt-2 glass-frosted rounded-3xl p-4 md-hidden backdrop-blur-xl saturate-200"
             >
               {NAV_LINKS.map((link, i) => (
                 <motion.div
@@ -235,7 +302,7 @@ export function Navbar() {
                   <Link
                     href={link.href}
                     onClick={() => setMobileOpen(false)}
-                    className="block px-4 py-2.5 text-sm font-medium text-white/80 hover:text-white rounded-full hover:bg-white/8 transition-all"
+                    className="block px-4 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground dark:text-white/80 dark:hover:text-white rounded-full hover:bg-white/8 dark:hover:bg-white/8 transition-all"
                   >
                     {link.label}
                   </Link>

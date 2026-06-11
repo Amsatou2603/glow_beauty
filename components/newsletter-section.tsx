@@ -37,7 +37,7 @@ export function NewsletterSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.15 }}
-            className="font-display text-3xl sm:text-4xl font-bold text-white/90 mb-4"
+            className="font-display text-3xl sm:text-4xl font-bold text-foreground/90 mb-4"
           >
             Rejoignez le cercle{' '}
             <span className="text-gradient">Glow Beauty</span>
@@ -48,7 +48,7 @@ export function NewsletterSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-white/65 text-base mb-8 max-w-md mx-auto"
+            className="text-foreground/65 text-base mb-8 max-w-md mx-auto"
           >
             Accès anticipé aux nouveautés, offres exclusives, conseils beauté personnalisés et rituels de saison. -15% sur votre première commande.
           </motion.p>
@@ -63,8 +63,10 @@ export function NewsletterSection() {
           >
             <input
               type="email"
+              id="newsletter-email"
+              name="email"
               placeholder="Votre adresse email"
-              className="flex-1 px-5 py-3.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm outline-none focus:border-rose-glow text-sm text-white placeholder:text-white/35 transition-colors"
+              className="flex-1 px-5 py-3.5 rounded-full bg-white/10 dark:bg-white/10 border border-white/20 dark:border-white/20 backdrop-blur-sm outline-none focus:border-rose-glow text-sm text-foreground placeholder:text-foreground/35 transition-colors"
             />
             <motion.button
               type="submit"
@@ -85,7 +87,7 @@ export function NewsletterSection() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.35 }}
-            className="text-xs text-white/35 mt-4"
+            className="text-xs text-foreground/35 mt-4"
           >
             En vous inscrivant, vous acceptez notre politique de confidentialité. Désinscription à tout moment.
           </motion.p>

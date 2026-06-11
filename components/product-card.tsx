@@ -70,7 +70,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           <motion.button
             initial={{ opacity: 0, y: 10 }}
             whileHover={{ opacity: 1, y: 0 }}
-            className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-4 py-2 glass-frosted rounded-xl text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-all"
+            className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-4 py-2 glass-frosted rounded-xl text-foreground dark:text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-all"
           >
             <Eye className="w-3.5 h-3.5" />
             Aperçu rapide
@@ -138,10 +138,10 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
 
       {/* Content */}
       <div className="flex flex-col flex-1 p-4 pt-3">
-        <p className="text-[11px] font-semibold tracking-widest uppercase text-white/40 mb-1">
+        <p className="text-[11px] font-semibold tracking-widest uppercase text-foreground/40 dark:text-white/40 mb-1">
           {product.brand}
         </p>
-        <h3 className="font-semibold text-sm leading-snug text-white/90 mb-1.5 line-clamp-2 flex-1">
+        <h3 className="font-semibold text-sm leading-snug text-foreground/90 dark:text-white/90 mb-1.5 line-clamp-2 flex-1">
           {product.name}
         </h3>
 
@@ -157,20 +157,20 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                     ? 'fill-amber-400 text-amber-400'
                     : i < product.rating
                     ? 'fill-amber-200 text-amber-200'
-                    : 'text-white/15 fill-white/15'
+                    : 'text-foreground/15 dark:text-white/15 fill-foreground/15 dark:fill-white/15'
                 )}
               />
             ))}
           </div>
-          <span className="text-[11px] text-white/45">({product.review_count})</span>
+          <span className="text-[11px] text-foreground/45 dark:text-white/45">({product.review_count})</span>
         </div>
 
         {/* Price + CTA */}
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-baseline gap-1.5">
-            <span className="text-base font-bold text-white" style={{ fontWeight: 600 }}>€{product.price}</span>
+            <span className="text-base font-bold text-foreground dark:text-white" style={{ fontWeight: 600 }}>€{product.price}</span>
             {product.original_price && (
-              <span className="text-xs text-white/35 line-through">€{product.original_price}</span>
+              <span className="text-xs text-foreground/35 dark:text-white/35 line-through">€{product.original_price}</span>
             )}
           </div>
 

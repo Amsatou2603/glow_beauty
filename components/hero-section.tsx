@@ -20,9 +20,7 @@ export function HeroSection() {
   return (
     <section ref={containerRef} className="relative min-h-screen flex items-center overflow-hidden pt-20">
       {/* Hero gradient background */}
-      <div className="absolute inset-0" style={{
-        background: 'linear-gradient(135deg, #0f0a12, #1a0e1e, #200d1f)',
-      }} />
+      <div className="absolute inset-0 bg-gradient-to-br from-background via-card to-background dark:from-dark-base dark:via-dark-card dark:to-dark-base" />
 
       <motion.div style={{ y, opacity }} className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center min-h-[80vh] py-12">
@@ -34,7 +32,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.3 }}
-              className="font-display font-bold leading-[1.1] tracking-tight text-balance text-white"
+              className="font-display font-bold leading-[1.1] tracking-tight text-balance text-foreground"
               style={{ fontSize: 'clamp(2.5rem, 7vw, 5rem)' }}
             >
               Révélez votre{' '}
@@ -54,7 +52,7 @@ export function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.45 }}
               className="text-lg leading-relaxed max-w-md"
-              style={{ color: 'rgba(255, 255, 255, 0.65)' }}
+              style={{ color: 'hsl(var(--foreground) / 0.65)' }}
             >
               Des formules ultra-luxueuses inspirées de la nature. Skincare, maquillage et rituels bien-être pensés pour sublimer chaque type de peau.
             </motion.p>
@@ -105,7 +103,7 @@ export function HeroSection() {
                 href="#about"
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold glass-frosted text-white"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold glass-frosted text-foreground dark:text-white"
                 style={{
                   border: '1px solid rgba(255, 255, 255, 0.25)',
                 }}
@@ -141,9 +139,9 @@ export function HeroSection() {
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
                   ))}
-                  <span className="text-xs font-bold text-white ml-1">4.9</span>
+                  <span className="text-xs font-bold text-foreground ml-1">4.9</span>
                 </div>
-                <p className="text-xs text-white mt-0.5">+28 000 clientes ravies</p>
+                <p className="text-xs text-foreground mt-0.5">+28 000 clientes ravies</p>
               </div>
             </motion.div>
           </div>
@@ -195,15 +193,15 @@ export function HeroSection() {
                     />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-white leading-tight">Sérum Éclat</p>
-                    <p className="text-[10px] text-white/55 mt-0.5">Rose & Hyaluronique</p>
+                    <p className="text-xs font-semibold text-foreground leading-tight">Sérum Éclat</p>
+                    <p className="text-[10px] text-foreground/55 mt-0.5">Rose & Hyaluronique</p>
                     <div className="flex items-center gap-0.5 mt-1">
                       {[...Array(5)].map((_, i) => <Star key={i} className="w-2 h-2 fill-amber-400 text-amber-400" />)}
                     </div>
                   </div>
                 </div>
                 <div className="mt-2 flex items-center justify-between">
-                  <span className="text-xs font-bold text-white">€89</span>
+                  <span className="text-xs font-bold text-foreground">€89</span>
                   <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium" style={{
                     background: 'rgba(232, 0, 77, 0.15)',
                     color: '#E8004D',
@@ -228,8 +226,8 @@ export function HeroSection() {
                     />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-white leading-tight">Crème Velours</p>
-                    <p className="text-[10px] text-white/55 mt-0.5">Nourrissante & Anti-âge</p>
+                    <p className="text-xs font-semibold text-foreground leading-tight">Crème Velours</p>
+                    <p className="text-[10px] text-foreground/55 mt-0.5">Nourrissante & Anti-âge</p>
                     <div className="mt-1 inline-flex items-center px-1.5 py-0.5 rounded-full" style={{
                       background: 'rgba(244, 167, 195, 0.15)',
                     }}>
@@ -238,8 +236,8 @@ export function HeroSection() {
                   </div>
                 </div>
                 <div className="mt-2 flex items-center justify-between">
-                  <span className="text-xs font-bold text-white">€125</span>
-                  <span className="text-[10px] text-white/40">30 ml</span>
+                  <span className="text-xs font-bold text-foreground">€125</span>
+                  <span className="text-[10px] text-foreground/40">30 ml</span>
                 </div>
               </motion.div>
             </motion.div>
@@ -254,13 +252,13 @@ export function HeroSection() {
         transition={{ delay: 1.5, duration: 0.5 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
       >
-        <span className="text-xs text-white/40 tracking-widest uppercase">Scroll</span>
+        <span className="text-xs text-foreground/40 tracking-widest uppercase">Scroll</span>
         <motion.div
           animate={{ y: [0, 6, 0] }}
           transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-5 h-8 rounded-full border border-white/20 flex items-start justify-center pt-1.5"
+          className="w-5 h-8 rounded-full border border-foreground/20 flex items-start justify-center pt-1.5"
         >
-          <div className="w-1 h-1.5 rounded-full bg-white/40" />
+          <div className="w-1 h-1.5 rounded-full bg-foreground/40" />
         </motion.div>
       </motion.div>
     </section>

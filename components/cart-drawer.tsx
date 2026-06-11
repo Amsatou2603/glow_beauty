@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, ShoppingBag, Trash2, Plus, Minus, ArrowRight } from 'lucide-react';
 import { useCartStore } from '@/lib/store';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 export function CartDrawer() {
   const { items, isOpen, setOpen, removeItem, updateQuantity, total, itemCount } = useCartStore();
@@ -40,7 +41,7 @@ export function CartDrawer() {
             transition={{ type: 'spring', stiffness: 300, damping: 35 }}
             className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-[420px] flex flex-col"
           >
-            <div className="flex flex-col h-full glass-navbar m-3 rounded-[2rem] overflow-hidden shadow-float dark:shadow-float-dark">
+            <div className="flex flex-col h-full glass-cart m-3 rounded-[2rem] overflow-hidden shadow-float dark:shadow-float-dark">
               {/* Header */}
               <div className="flex items-center justify-between px-6 py-5 border-b border-white/20 dark:border-white/8">
                 <div className="flex items-center gap-3">
@@ -177,15 +178,17 @@ export function CartDrawer() {
                   </div>
 
                   {/* Checkout */}
-                  <motion.button
-                    whileHover={{ scale: 1.02, boxShadow: '0 12px 32px rgba(244,63,94,0.45)' }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-semibold text-white"
-                    style={{ background: 'linear-gradient(135deg, #f472b6 0%, #f43f5e 60%, #db2777 100%)', boxShadow: '0 6px 20px rgba(244,63,94,0.4), inset 0 1px 0 rgba(255,255,255,0.25)' }}
-                  >
-                    Passer commande
-                    <ArrowRight className="w-4 h-4" />
-                  </motion.button>
+                  <Link href="/checkout" onClick={() => setOpen(false)}>
+                    <motion.button
+                      whileHover={{ scale: 1.02, boxShadow: '0 12px 32px rgba(244,63,94,0.45)' }}
+                      whileTap={{ scale: 0.98 }}
+                      className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-semibold text-white"
+                      style={{ background: 'linear-gradient(135deg, #f472b6 0%, #f43f5e 60%, #db2777 100%)', boxShadow: '0 6px 20px rgba(244,63,94,0.4), inset 0 1px 0 rgba(255,255,255,0.25)' }}
+                    >
+                      Passer commande
+                      <ArrowRight className="w-4 h-4" />
+                    </motion.button>
+                  </Link>
                 </div>
               )}
             </div>

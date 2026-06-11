@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${playfair.variable}`}>
-      <body className={`${inter.className} bg-dark-base antialiased`}>
+      <body className={`${inter.className} antialiased`}>
         <Providers>
           {/* Animated Blobs Background */}
           <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
