@@ -6,14 +6,13 @@ import { User, ShoppingBag, Heart, MapPin, Settings, LogOut, ChevronRight, Spark
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/components/auth-provider';
-import { supabase } from '@/lib/supabase';
+import { useDjangoAuth } from '@/components/django-auth-provider';
+import { api } from '@/lib/api';
 import { useEffect } from 'react';
-import { isAdmin } from '@/lib/admin';
 
 export default function AccountPage() {
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
+  const { user, token, loading: authLoading, logout } = useDjangoAuth();
   const [activeTab, setActiveTab] = useState('profile');
   const [stats, setStats] = useState({ orders: 0, pending: 0, wishlist: 0 });
   const [lastOrder, setLastOrder] = useState<any>(null);
@@ -28,43 +27,28 @@ export default function AccountPage() {
 
   useEffect(() => {
     const fetchStats = async () => {
-      if (!user) return;
+      if (!user || !token) return;
 
-      const [
-        { count: ordersCount },
-        { count: pendingCount },
-        { count: wishlistCount },
-        { data: lastOrders },
-        { data: userData }
-      ] = await Promise.all([
-        supabase.from('orders').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
-        supabase.from('orders').select('*', { count: 'exact', head: true }).eq('user_id', user.id).in('status', ['pending', 'processing']),
-        supabase.from('wishlist').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
-        supabase.from('orders').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(1),
-        supabase.from('users').select('role').eq('id', user.id).single()
-      ]);
-
-      setStats({
-        orders: ordersCount || 0,
-        pending: pendingCount || 0,
-        wishlist: wishlistCount || 0,
-      });
-
-      if (lastOrders && lastOrders.length > 0) {
-        setLastOrder(lastOrders[0]);
-      }
-
-      if (userData) {
-        setUserRole(userData.role);
-        setIsAdmin(userData.role === 'admin');
+      try {
+        // For now, set basic stats since we need to implement order/wishlist endpoints
+        setStats({
+          orders: 0,
+          pending: 0,
+          wishlist: 0,
+        });
+        
+        setUserRole(user.role);
+        setIsAdmin(user.role === 'admin');
+      } catch (error) {
+        console.error('Error fetching stats:', error);
       }
     };
 
     fetchStats();
-  }, [user]);
+  }, [user, token]);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    logout();
     router.push('/auth/login');
   };
 
@@ -148,7 +132,9 @@ export default function AccountPage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
                     <h2 className="font-display text-2xl font-bold text-foreground">
-                      {user.user_metadata?.full_name || 'Utilisateur'}
+                      {user.first_name && user.last_name 
+                        ? `${user.first_name} ${user.last_name}` 
+                        : user.username || 'Utilisateur'}
                     </h2>
                     {userRole && (
                       <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${

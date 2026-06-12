@@ -1,11 +1,11 @@
 'use client';
 
 import { ThemeProvider } from 'next-themes';
-import { AuthProvider } from './auth-provider';
+import { DjangoAuthProvider } from './django-auth-provider';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <AuthProvider>
+    <DjangoAuthProvider>
       <ThemeProvider
         attribute="class"
         defaultTheme="light"
@@ -14,6 +14,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
       >
         {children}
       </ThemeProvider>
-    </AuthProvider>
+    </DjangoAuthProvider>
   );
 }

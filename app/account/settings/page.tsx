@@ -4,18 +4,16 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Mail, Lock, Bell, Shield, CreditCard, Trash2, Package, Users, ShoppingBag, BarChart3, Edit, Plus, X, Save } from 'lucide-react';
 import Link from 'next/link';
-import { useAuth } from '@/components/auth-provider';
-import { supabase } from '@/lib/supabase';
+import { useDjangoAuth } from '@/components/django-auth-provider';
+import { api } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { Sparkles } from 'lucide-react';
-import { isAdmin, getAllUsers, updateUserRole, deleteUser, getAllOrders, updateOrderStatus, getStats, type AdminUser } from '@/lib/admin';
 import { type Product } from '@/lib/store';
 import { AdminProductModal } from '@/components/admin-product-modal';
 
 export default function SettingsPage() {
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
-  const [is_admin, setIsAdmin] = useState(false);
+  const { user, token, loading: authLoading, isAdmin } = useDjangoAuth();
   const [activeTab, setActiveTab] = useState('profile');
   const [formData, setFormData] = useState({
     fullName: '',
@@ -27,7 +25,7 @@ export default function SettingsPage() {
   
   // Admin state
   const [stats, setStats] = useState({ users: 0, orders: 0, products: 0, revenue: 0 });
-  const [allUsers, setAllUsers] = useState<AdminUser[]>([]);
+  const [allUsers, setAllUsers] = useState<any[]>([]);
   const [allOrders, setAllOrders] = useState<any[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -40,30 +38,19 @@ export default function SettingsPage() {
   }, [user, authLoading, router]);
 
   useEffect(() => {
-    const checkAdmin = async () => {
-      const adminStatus = await isAdmin();
-      setIsAdmin(adminStatus);
-      if (adminStatus) {
-        loadAdminData();
+    const loadAdminData = async () => {
+      if (!isAdmin || !token) return;
+      try {
+        // Load admin data using Django API
+        const productsData = await api.getProducts();
+        setProducts(productsData);
+        setStats({ users: 0, orders: 0, products: productsData.length, revenue: 0 });
+      } catch (error) {
+        console.error('Error loading admin data:', error);
       }
     };
-    checkAdmin();
-  }, [user]);
-
-  const loadAdminData = async () => {
-    const [statsData, usersData, ordersData, productsData] = await Promise.all([
-      getStats(),
-      getAllUsers(),
-      getAllOrders(),
-      supabase.from('products').select('*').order('created_at', { ascending: false })
-    ]);
-    setStats(statsData);
-    setAllUsers(usersData);
-    setAllOrders(ordersData);
-    if (productsData.data) {
-      setProducts(productsData.data as Product[]);
-    }
-  };
+    loadAdminData();
+  }, [isAdmin, token]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -71,49 +58,46 @@ export default function SettingsPage() {
       
       setFormData(prev => ({
         ...prev,
-        fullName: user.user_metadata?.full_name || '',
+        fullName: user.first_name && user.last_name 
+          ? `${user.first_name} ${user.last_name}` 
+          : user.username || '',
         email: user.email || '',
+        phone: user.phone || '',
       }));
-
-      const { data } = await supabase
-        .from('profiles')
-        .select('phone')
-        .eq('id', user.id)
-        .single();
-        
-      if (data) {
-        setFormData(prev => ({
-          ...prev,
-          phone: data.phone || '',
-        }));
-      }
     };
     
     fetchProfile();
   }, [user]);
 
   const handleSave = async () => {
-    if (!user) return;
+    if (!user || !token) return;
     setSaving(true);
     setMessage({ text: '', type: '' });
 
     try {
-      // Update Auth Metadata
-      const { error: authError } = await supabase.auth.updateUser({
-        data: { full_name: formData.fullName }
+      // Update user profile using Django API
+      const nameParts = formData.fullName.split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+      
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/auth/profile/`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${token}`,
+        },
+        body: JSON.stringify({
+          first_name: firstName,
+          last_name: lastName,
+          phone: formData.phone,
+        }),
       });
 
-      if (authError) throw authError;
-
-      // Update Profile table
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({ phone: formData.phone })
-        .eq('id', user.id);
-
-      if (profileError) throw profileError;
-
-      setMessage({ text: 'Profil mis à jour avec succès', type: 'success' });
+      if (response.ok) {
+        setMessage({ text: 'Profil mis à jour avec succès', type: 'success' });
+      } else {
+        setMessage({ text: 'Erreur lors de la mise à jour', type: 'error' });
+      }
     } catch (error: any) {
       setMessage({ text: error.message || 'Une erreur est survenue', type: 'error' });
     } finally {
@@ -121,45 +105,28 @@ export default function SettingsPage() {
     }
   };
 
-  const handleUpdateUserRole = async (userId: string, role: 'user' | 'admin') => {
-    const success = await updateUserRole(userId, role);
-    if (success) {
-      setMessage({ text: 'Rôle mis à jour avec succès', type: 'success' });
-      loadAdminData();
-    } else {
-      setMessage({ text: 'Erreur lors de la mise à jour du rôle', type: 'error' });
-    }
-  };
-
-  const handleDeleteUser = async (userId: string) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) return;
-    const success = await deleteUser(userId);
-    if (success) {
-      setMessage({ text: 'Utilisateur supprimé avec succès', type: 'success' });
-      loadAdminData();
-    } else {
-      setMessage({ text: 'Erreur lors de la suppression de l\'utilisateur', type: 'error' });
-    }
-  };
-
-  const handleUpdateOrderStatus = async (orderId: string, status: string) => {
-    const success = await updateOrderStatus(orderId, status);
-    if (success) {
-      setMessage({ text: 'Statut de commande mis à jour', type: 'success' });
-      loadAdminData();
-    } else {
-      setMessage({ text: 'Erreur lors de la mise à jour du statut', type: 'error' });
-    }
-  };
-
   const handleDeleteProduct = async (productId: string) => {
     if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) return;
-    const { error } = await supabase.from('products').delete().eq('id', productId);
-    if (error) {
+    if (!token) return;
+    
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/products/${productId}/`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Token ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        setMessage({ text: 'Produit supprimé avec succès', type: 'success' });
+        // Reload products
+        const productsData = await api.getProducts();
+        setProducts(productsData);
+      } else {
+        setMessage({ text: 'Erreur lors de la suppression du produit', type: 'error' });
+      }
+    } catch (error) {
       setMessage({ text: 'Erreur lors de la suppression du produit', type: 'error' });
-    } else {
-      setMessage({ text: 'Produit supprimé avec succès', type: 'success' });
-      loadAdminData();
     }
   };
 
@@ -172,12 +139,10 @@ export default function SettingsPage() {
     { id: 'payment', label: 'Paiement', icon: CreditCard },
   ];
 
-  if (is_admin) {
+  if (isAdmin) {
     tabs.push(
       { id: 'admin-dashboard', label: 'Admin Dashboard', icon: BarChart3 },
-      { id: 'admin-products', label: 'Produits', icon: Package },
-      { id: 'admin-users', label: 'Utilisateurs', icon: Users },
-      { id: 'admin-orders', label: 'Commandes', icon: ShoppingBag }
+      { id: 'admin-products', label: 'Produits', icon: Package }
     );
   }
 
@@ -400,34 +365,16 @@ export default function SettingsPage() {
             </motion.div>
           )}
 
-          {is_admin && activeTab === 'admin-dashboard' && (
+          {isAdmin && activeTab === 'admin-dashboard' && (
             <AdminDashboard stats={stats} />
           )}
 
-          {is_admin && activeTab === 'admin-products' && (
+          {isAdmin && activeTab === 'admin-products' && (
             <AdminProducts 
               products={products} 
               onEdit={setEditingProduct}
               onDelete={handleDeleteProduct}
               onAdd={() => { setEditingProduct(null); setShowProductModal(true); }}
-              onRefresh={loadAdminData}
-            />
-          )}
-
-          {is_admin && activeTab === 'admin-users' && (
-            <AdminUsers 
-              users={allUsers} 
-              onUpdateRole={handleUpdateUserRole}
-              onDeleteUser={handleDeleteUser}
-              onRefresh={loadAdminData}
-            />
-          )}
-
-          {is_admin && activeTab === 'admin-orders' && (
-            <AdminOrders 
-              orders={allOrders} 
-              onUpdateStatus={handleUpdateOrderStatus}
-              onRefresh={loadAdminData}
             />
           )}
         </AnimatePresence>
@@ -439,7 +386,8 @@ export default function SettingsPage() {
           product={editingProduct}
           onSuccess={() => {
             setShowProductModal(false);
-            loadAdminData();
+            // Reload products
+            api.getProducts().then(setProducts);
           }}
         />
       </div>
@@ -550,7 +498,7 @@ function AdminUsers({ users, onUpdateRole, onDeleteUser, onRefresh }: any) {
         Gestion des utilisateurs
       </h2>
       <div className="space-y-3">
-        {users.map((user: AdminUser) => (
+        {users.map((user: any) => (
           <div key={user.id} className="flex items-center justify-between p-4 glass-clear rounded-xl">
             <div>
               <p className="font-medium text-foreground">{user.full_name || user.email}</p>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Save } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { useDjangoAuth } from '@/components/django-auth-provider';
 import { type Product } from '@/lib/store';
 
 interface AdminProductModalProps {
@@ -14,6 +14,7 @@ interface AdminProductModalProps {
 }
 
 export function AdminProductModal({ isOpen, onClose, product, onSuccess }: AdminProductModalProps) {
+  const { token } = useDjangoAuth();
   const [formData, setFormData] = useState({
     name: '',
     brand: '',
@@ -90,16 +91,33 @@ export function AdminProductModal({ isOpen, onClose, product, onSuccess }: Admin
         ingredients: formData.ingredients || null,
       };
 
-      let error;
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+      let response;
+      
       if (product) {
-        const result = await supabase.from('products').update(productData).eq('id', product.id);
-        error = result.error;
+        response = await fetch(`${API_BASE}/products/${product.id}/`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`,
+          },
+          body: JSON.stringify(productData),
+        });
       } else {
-        const result = await supabase.from('products').insert(productData);
-        error = result.error;
+        response = await fetch(`${API_BASE}/products/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`,
+          },
+          body: JSON.stringify(productData),
+        });
       }
 
-      if (error) throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Une erreur est survenue');
+      }
 
       onSuccess();
       onClose();

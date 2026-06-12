@@ -6,7 +6,7 @@ import { Sparkles, Mail, Lock, User, ArrowRight, Eye, EyeOff, Check } from 'luci
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -62,22 +62,30 @@ export default function RegisterPage() {
     
     setLoading(true);
     
-    const { error } = await supabase.auth.signUp({
-      email: formData.email,
-      password: formData.password,
-      options: {
-        data: {
-          full_name: formData.fullName,
-        },
-      },
-    });
+    try {
+      const nameParts = formData.fullName.split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+      const username = formData.email.split('@')[0];
+      
+      const result = await api.register({
+        email: formData.email,
+        password: formData.password,
+        username,
+        first_name: firstName,
+        last_name: lastName,
+      });
 
-    setLoading(false);
+      setLoading(false);
 
-    if (error) {
-      setGlobalError(error.message);
-    } else {
-      router.push('/account');
+      if (result.error) {
+        setGlobalError(result.error);
+      } else {
+        router.push('/auth/login');
+      }
+    } catch (error) {
+      setLoading(false);
+      setGlobalError('Erreur lors de l\'inscription');
     }
   };
 

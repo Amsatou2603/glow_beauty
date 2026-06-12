@@ -6,10 +6,11 @@ import { Sparkles, Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { supabase } from '@/lib/supabase';
+import { useDjangoAuth } from '@/components/django-auth-provider';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useDjangoAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -24,17 +25,13 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
     
-    const { error } = await supabase.auth.signInWithPassword({
-      email: formData.email,
-      password: formData.password,
-    });
-
-    setLoading(false);
-    
-    if (error) {
-      setError(error.message);
-    } else {
+    try {
+      await login(formData.email, formData.password);
+      setLoading(false);
       router.push('/account');
+    } catch (error: any) {
+      setLoading(false);
+      setError(error.message || 'Erreur lors de la connexion');
     }
   };
 

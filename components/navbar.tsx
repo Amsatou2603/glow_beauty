@@ -7,8 +7,7 @@ import { useTheme } from 'next-themes';
 import { useCartStore } from '@/lib/store';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { useAuth } from '@/components/auth-provider';
-import { isAdmin } from '@/lib/admin';
+import { useDjangoAuth } from '@/components/django-auth-provider';
 
 const NAV_LINKS = [
   { label: 'Skincare', href: '/shop/skincare' },
@@ -42,11 +41,10 @@ export function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [is_admin, setIsAdmin] = useState(false);
   const itemCount = useCartStore((s) => s.itemCount());
   const setCartOpen = useCartStore((s) => s.setOpen);
   const searchRef = useRef<HTMLInputElement>(null);
-  const { user } = useAuth();
+  const { user, isAdmin } = useDjangoAuth();
 
   const filteredProducts = searchQuery
     ? SEARCH_PRODUCTS.filter(product =>
@@ -61,14 +59,6 @@ export function Navbar() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  useEffect(() => {
-    const checkAdmin = async () => {
-      const adminStatus = await isAdmin();
-      setIsAdmin(adminStatus);
-    };
-    checkAdmin();
-  }, [user]);
 
   useEffect(() => {
     if (searchOpen) searchRef.current?.focus();
@@ -243,7 +233,7 @@ export function Navbar() {
               >
                 <User className="w-5 h-5" />
               </motion.button>
-              {is_admin && (
+              {isAdmin && (
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}

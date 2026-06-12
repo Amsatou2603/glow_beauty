@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, useRouter } from 'next/navigation';
 import { ShoppingBag, Heart, Star, Edit, Trash2, ArrowLeft, Check, X } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
 import { useCartStore } from '@/lib/store';
-import { isAdmin } from '@/lib/admin';
+import { useDjangoAuth } from '@/components/django-auth-provider';
+import { api } from '@/lib/api';
 import { AdminProductModal } from '@/components/admin-product-modal';
 import Link from 'next/link';
 
@@ -16,39 +16,27 @@ export default function ProductDetailPage() {
   const productId = params.id as string;
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [isAdminUser, setIsAdminUser] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const { isAdmin, token } = useDjangoAuth();
   
   const addItem = useCartStore((s) => s.addItem);
   const setCartOpen = useCartStore((s) => s.setOpen);
 
   useEffect(() => {
     const fetchProduct = async () => {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .eq('id', productId)
-        .single();
-
-      if (error) {
+      try {
+        const data = await api.getProduct(productId);
+        setProduct(data);
+        setLoading(false);
+      } catch (error) {
         console.error('Error fetching product:', error);
         router.push('/');
-        return;
       }
-
-      setProduct(data);
-      setLoading(false);
-    };
-
-    const checkAdmin = async () => {
-      const adminStatus = await isAdmin();
-      setIsAdminUser(adminStatus);
     };
 
     fetchProduct();
-    checkAdmin();
   }, [productId, router]);
 
   const handleAddToCart = () => {
@@ -62,13 +50,25 @@ export default function ProductDetailPage() {
   const handleDelete = async () => {
     if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) return;
     
-    const { error } = await supabase.from('products').delete().eq('id', productId);
-    if (error) {
-      console.error('Error deleting product:', error);
-      alert('Erreur lors de la suppression du produit');
-    } else {
+    try {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+      const response = await fetch(`${API_BASE}/products/${productId}/`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de la suppression du produit');
+      }
+
       alert('Produit supprimé avec succès');
       router.push('/');
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      alert('Erreur lors de la suppression du produit');
     }
   };
 
@@ -154,7 +154,7 @@ export default function ProductDetailPage() {
           >
             <div className="glass-frosted rounded-2xl p-8">
               {/* Admin Actions */}
-              {isAdminUser && (
+              {isAdmin && (
                 <div className="flex gap-2 mb-6">
                   <motion.button
                     whileHover={{ scale: 1.02 }}
@@ -279,7 +279,7 @@ export default function ProductDetailPage() {
         </div>
 
         {/* Edit Modal */}
-        {isAdminUser && (
+        {isAdmin && (
           <AdminProductModal
             isOpen={showEditModal}
             onClose={() => setShowEditModal(false)}
@@ -287,7 +287,7 @@ export default function ProductDetailPage() {
             onSuccess={() => {
               setShowEditModal(false);
               // Refresh product data
-              supabase.from('products').select('*').eq('id', productId).single().then(({ data }) => {
+              api.getProduct(productId).then(data => {
                 if (data) setProduct(data);
               });
             }}
