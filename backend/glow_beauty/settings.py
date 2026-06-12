@@ -106,10 +106,10 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
 }
 
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,https://glowbeautyyy.netlify.app,https://glow-beauty.vercel.app').split(',')
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,https://glowbeautyyy.netlify.app,https://glow-beauty-plum.vercel.app').split(',')
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True  # Temporary fix for Render deployment
 
-CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:3000,https://glowbeautyyy.netlify.app,https://glow-beauty.vercel.app').split(',')
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:3000,https://glowbeautyyy.netlify.app,https://glow-beauty-plum.vercel.app').split(',')
 
 AUTH_USER_MODEL = 'users.User'
