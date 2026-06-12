@@ -9,9 +9,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-this-in-production')
 
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+if not DEBUG:
+    # Add Render URL if not in ALLOWED_HOSTS
+    render_url = os.getenv('RENDER_EXTERNAL_URL')
+    if render_url:
+        from urllib.parse import urlparse
+        parsed = urlparse(render_url)
+        if parsed.netloc not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(parsed.netloc)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -98,9 +106,9 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
 }
 
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000').split(',')
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,https://glowbeautyyy.netlify.app').split(',')
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:3000').split(',')
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:3000,https://glowbeautyyy.netlify.app').split(',')
 
 AUTH_USER_MODEL = 'users.User'
