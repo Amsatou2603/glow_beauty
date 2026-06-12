@@ -108,7 +108,7 @@ REST_FRAMEWORK = {
 
 CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,https://glowbeautyyy.netlify.app').split(',')
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = True  # Temporary fix for deployment
+CORS_ALLOW_ALL_ORIGINS = True  # Temporary fix for Render deployment
 
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:3000,https://glowbeautyyy.netlify.app').split(',')
 
