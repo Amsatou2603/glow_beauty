@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { Sparkles } from 'lucide-react';
 import { type Product } from '@/lib/store';
 import { AdminProductModal } from '@/components/admin-product-modal';
+import { ConfirmModal } from '@/components/confirm-modal';
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -30,6 +31,8 @@ export default function SettingsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showProductModal, setShowProductModal] = useState(false);
+  const [deleteProductId, setDeleteProductId] = useState<string | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -106,11 +109,15 @@ export default function SettingsPage() {
   };
 
   const handleDeleteProduct = async (productId: string) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) return;
-    if (!token) return;
+    setDeleteProductId(productId);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteProduct = async () => {
+    if (!deleteProductId || !token) return;
     
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/products/${productId}/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/products/${deleteProductId}/`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Token ${token}`,
@@ -122,6 +129,8 @@ export default function SettingsPage() {
         // Reload products
         const productsData = await api.getProducts();
         setProducts(productsData);
+        setShowDeleteModal(false);
+        setDeleteProductId(null);
       } else {
         setMessage({ text: 'Erreur lors de la suppression du produit', type: 'error' });
       }
@@ -389,6 +398,21 @@ export default function SettingsPage() {
             // Reload products
             api.getProducts().then(setProducts);
           }}
+        />
+
+        {/* Delete Confirmation Modal */}
+        <ConfirmModal
+          isOpen={showDeleteModal}
+          onClose={() => {
+            setShowDeleteModal(false);
+            setDeleteProductId(null);
+          }}
+          onConfirm={confirmDeleteProduct}
+          title="Supprimer le produit"
+          message="Êtes-vous sûr de vouloir supprimer ce produit ? Cette action est irréversible."
+          confirmText="Supprimer"
+          cancelText="Annuler"
+          variant="danger"
         />
       </div>
     </div>

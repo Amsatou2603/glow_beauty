@@ -4,8 +4,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Package, Truck, CheckCircle, Clock, XCircle, Sparkles } from 'lucide-react';
 import Link from 'next/link';
-import { useAuth } from '@/components/auth-provider';
-import { supabase } from '@/lib/supabase';
+import { useDjangoAuth } from '@/components/django-auth-provider';
+import { api } from '@/lib/api';
 import { useEffect, useState } from 'react';
 
 
@@ -25,25 +25,29 @@ const STATUS_COLORS = {
 };
 
 export default function OrdersPage() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, token } = useDjangoAuth();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchOrders = async () => {
-      if (!user) return;
+      if (!user || !token) return;
       
-      const { data } = await supabase
-        .from('orders')
-        .select(`
-          *,
-          order_items ( count )
-        `)
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+      try {
+        const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+        const response = await fetch(`${API_BASE}/orders/`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`,
+          },
+        });
 
-      if (data) {
-        setOrders(data);
+        if (response.ok) {
+          const data = await response.json();
+          setOrders(data);
+        }
+      } catch (error) {
+        console.error('Error fetching orders:', error);
       }
       setLoading(false);
     };
@@ -55,7 +59,7 @@ export default function OrdersPage() {
         setLoading(false);
       }
     }
-  }, [user, authLoading]);
+  }, [user, authLoading, token]);
 
   const getStatusLabel = (status: string) => {
     switch (status) {
@@ -144,7 +148,7 @@ export default function OrdersPage() {
 
                 <div className="flex items-center justify-between pt-4 border-t border-foreground/10">
                   <div className="text-sm text-foreground/60">
-                    {order.order_items?.[0]?.count || 0} article{order.order_items?.[0]?.count > 1 ? 's' : ''}
+                    {order.items?.length || 0} article{order.items?.length > 1 ? 's' : ''}
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="font-semibold text-foreground">€{Number(order.total).toFixed(2)}</div>
