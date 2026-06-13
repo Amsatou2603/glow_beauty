@@ -74,7 +74,7 @@ DATABASES = {
         default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
         conn_max_age=600,
         conn_health_checks=True,
-        ssl_require='disable',
+        ssl_require='require',
     )
 }
 
@@ -118,7 +118,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
