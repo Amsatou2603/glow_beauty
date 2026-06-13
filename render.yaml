@@ -2,7 +2,7 @@ services:
   - type: web
     name: glow_beauty
     env: python
-    buildCommand: cd backend && pip install -r requirements.txt && python manage.py migrate --noinput && python manage.py collectstatic --noinput --clear
+    buildCommand: cd backend && pip install -r requirements.txt && python manage.py migrate --noinput && python manage.py collectstatic --noinput --clear && python manage.py create_admin
     startCommand: cd backend && gunicorn glow_beauty.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: PYTHON_VERSION
@@ -21,6 +21,10 @@ services:
         value: https://glowbeautyyy.netlify.app,https://glow-beauty-plum.vercel.app
       - key: CSRF_TRUSTED_ORIGINS
         value: https://glowbeautyyy.netlify.app,https://glow-beauty-plum.vercel.app
+      - key: ADMIN_EMAIL
+        generateValue: true
+      - key: ADMIN_PASSWORD
+        generateValue: true
 
 databases:
   - name: glow-beauty-db
