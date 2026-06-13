@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
+# pyrefly: ignore [missing-import]
 from dotenv import load_dotenv
+# pyrefly: ignore [missing-import]
 import dj_database_url
 
 load_dotenv()
@@ -155,3 +157,9 @@ CORS_ALLOW_ALL_ORIGINS = True  # Temporary fix for Render deployment
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:3000,https://glowbeautyyy.netlify.app,https://glow-beauty-plum.vercel.app').split(',')
 
 AUTH_USER_MODEL = 'users.User'
+
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
