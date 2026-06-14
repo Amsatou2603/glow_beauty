@@ -249,7 +249,7 @@ export function Navbar() {
               whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(232, 0, 77, 0.55)' }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setCartOpen(true)}
-              className="relative flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold text-white"
+              className="relative flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-1.5 rounded-full text-sm font-semibold text-white"
               style={{
                 background: '#E8004D',
               }}
@@ -319,6 +319,36 @@ export function Navbar() {
                   </Link>
                 </motion.div>
               ))}
+              
+              <div className="h-px bg-foreground/10 my-2 mx-4" />
+              
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: NAV_LINKS.length * 0.06 }}
+              >
+                <Link
+                  href="/account"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground dark:text-white/80 dark:hover:text-white rounded-full hover:bg-white/8 dark:hover:bg-white/8 transition-all"
+                >
+                  <User className="w-4 h-4" /> Mon profil
+                </Link>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: (NAV_LINKS.length + 1) * 0.06 }}
+              >
+                <Link
+                  href="/account/wishlist"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground dark:text-white/80 dark:hover:text-white rounded-full hover:bg-white/8 dark:hover:bg-white/8 transition-all"
+                >
+                  <Heart className="w-4 h-4" /> Ma liste d'envies
+                </Link>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
