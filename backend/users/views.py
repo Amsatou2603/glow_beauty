@@ -1,13 +1,19 @@
+# pyrefly: ignore [missing-import]
 from rest_framework import generics, status
 
+# pyrefly: ignore [missing-import]
 from rest_framework.decorators import api_view, permission_classes
 
+# pyrefly: ignore [missing-import]
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
+# pyrefly: ignore [missing-import]
 from rest_framework.response import Response
 
+# pyrefly: ignore [missing-import]
 from django.contrib.auth import authenticate, get_user_model
 
+# pyrefly: ignore [missing-import]
 from .serializers import UserSerializer, RegisterSerializer
 
 import os
@@ -52,6 +58,7 @@ def login(request):
 
     if user is not None:
 
+        # pyrefly: ignore [import-error, missing-import]
         from rest_framework.authtoken.models import Token
 
         token, created = Token.objects.get_or_create(user=user)
@@ -70,15 +77,18 @@ def login(request):
 
 
 
-@api_view(['GET'])
-
+@api_view(['GET', 'PATCH'])
 @permission_classes([IsAuthenticated])
-
 def profile(request):
-
-    serializer = UserSerializer(request.user)
-
-    return Response(serializer.data)
+    if request.method == 'PATCH':
+        serializer = UserSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
 
 
 
@@ -100,6 +110,7 @@ def load_data(request):
 
     """Load local data into production database"""
     try:
+        # pyrefly: ignore [missing-import]
         from django.core.management import call_command
         import json
         
