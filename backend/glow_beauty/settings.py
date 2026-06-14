@@ -14,14 +14,19 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-this-in-production'
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
-if not DEBUG:
-    # Add Render URL if not in ALLOWED_HOSTS
-    render_url = os.getenv('RENDER_EXTERNAL_URL')
-    if render_url:
-        from urllib.parse import urlparse
-        parsed = urlparse(render_url)
-        if parsed.netloc not in ALLOWED_HOSTS:
-            ALLOWED_HOSTS.append(parsed.netloc)
+# Clean up ALLOWED_HOSTS to remove 'http://' or 'https://' if the user accidentally added them
+ALLOWED_HOSTS = [host.replace('http://', '').replace('https://', '').strip() for host in ALLOWED_HOSTS]
+
+# Always add Render URL if available, regardless of DEBUG
+render_url = os.getenv('RENDER_EXTERNAL_URL')
+if render_url:
+    from urllib.parse import urlparse
+    parsed = urlparse(render_url)
+    if parsed.netloc and parsed.netloc not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(parsed.netloc)
+    elif not parsed.netloc and render_url not in ALLOWED_HOSTS:
+        # Fallback if RENDER_EXTERNAL_URL is just the hostname
+        ALLOWED_HOSTS.append(render_url.replace('http://', '').replace('https://', ''))
 
 INSTALLED_APPS = [
     'django.contrib.admin',
