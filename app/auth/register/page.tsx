@@ -25,31 +25,31 @@ export default function RegisterPage() {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
+
     if (!formData.fullName.trim()) {
       newErrors.fullName = 'Le nom est requis';
     }
-    
+
     if (!formData.email.trim()) {
       newErrors.email = 'L\'email est requis';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = 'Email invalide';
     }
-    
+
     if (!formData.password) {
       newErrors.password = 'Le mot de passe est requis';
     } else if (formData.password.length < 8) {
       newErrors.password = 'Le mot de passe doit contenir au moins 8 caractères';
     }
-    
+
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Les mots de passe ne correspondent pas';
     }
-    
+
     if (!formData.acceptTerms) {
       newErrors.acceptTerms = 'Vous devez accepter les conditions';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -57,17 +57,17 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setGlobalError(null);
-    
+
     if (!validateForm()) return;
-    
+
     setLoading(true);
-    
+
     try {
       const nameParts = formData.fullName.split(' ');
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
       const username = formData.email.split('@')[0];
-      
+
       const result = await api.register({
         email: formData.email,
         password: formData.password,
@@ -163,7 +163,7 @@ export default function RegisterPage() {
                   type="text"
                   value={formData.fullName}
                   onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                  placeholder="Marie Dupont"
+                  placeholder="Amadou Ndiaye"
                   className={cn(
                     'w-full pl-12 pr-4 py-3.5 rounded-xl bg-background/50 dark:bg-background/30 border outline-none focus:border-rose-500/50 text-foreground placeholder:text-foreground/30 transition-colors',
                     errors.fullName ? 'border-rose-500/50' : 'border-foreground/10'
@@ -220,7 +220,7 @@ export default function RegisterPage() {
                 </button>
               </div>
               {errors.password && <p className="text-xs text-rose-500 mt-1">{errors.password}</p>}
-              
+
               {/* Password strength */}
               {formData.password && (
                 <div className="mt-2 space-y-1">

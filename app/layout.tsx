@@ -16,6 +16,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://glowbeautyyy.netlify.app'),
   title: 'Glow Beauty — Premium Skincare & Cosmetics',
   description: 'Discover luxury beauty rituals crafted for your radiance. Premium skincare, cosmetics, and wellness essentials.',
   icons: {
@@ -33,11 +34,18 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Glow Beauty',
     description: 'Discover luxury beauty rituals crafted for your radiance.',
-    images: [{ url: '/icon-512x512.png' }],
+    images: [
+      { 
+        url: '/icon-512x512.png', 
+        width: 512, 
+        height: 512,
+        alt: 'Glow Beauty Logo' 
+      }
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    images: [{ url: '/icon-512x512.png' }],
+    images: ['/icon-512x512.png'],
   },
 };
 
