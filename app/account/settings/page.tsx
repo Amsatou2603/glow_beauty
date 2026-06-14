@@ -381,7 +381,7 @@ export default function SettingsPage() {
           {isAdmin && activeTab === 'admin-products' && (
             <AdminProducts 
               products={products} 
-              onEdit={setEditingProduct}
+              onEdit={(product) => { setEditingProduct(product); setShowProductModal(true); }}
               onDelete={handleDeleteProduct}
               onAdd={() => { setEditingProduct(null); setShowProductModal(true); }}
             />
