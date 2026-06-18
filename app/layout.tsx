@@ -16,73 +16,24 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://glowbeautyyy.netlify.app'),
   title: 'Glow Beauty — Premium Skincare & Cosmetics',
   description: 'Discover luxury beauty rituals crafted for your radiance. Premium skincare, cosmetics, and wellness essentials.',
-  icons: {
-    icon: [
-      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' },
-    ],
-    apple: [
-      { url: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
-      { url: '/icon-512x512.png', sizes: '512x512', type: 'image/png' },
-    ],
-  },
-  manifest: '/manifest.json',
   openGraph: {
     title: 'Glow Beauty',
     description: 'Discover luxury beauty rituals crafted for your radiance.',
-    images: [
-      { 
-        url: '/icon-512x512.png', 
-        width: 512, 
-        height: 512,
-        alt: 'Glow Beauty Logo' 
-      }
-    ],
+    images: [{ url: 'https://bolt.new/static/og_default.png' }],
   },
   twitter: {
     card: 'summary_large_image',
-    images: ['/icon-512x512.png'],
+    images: [{ url: 'https://bolt.new/static/og_default.png' }],
   },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${playfair.variable}`}>
-      <body className={`${inter.className} antialiased`}>
-        <Providers>
-          {/* Animated Blobs Background */}
-          <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-            {/* Blob 1: top-right, 600px, animation 10s */}
-            <div
-              className="blob top-0 right-0 w-[600px] h-[600px]"
-              style={{
-                background: 'radial-gradient(circle, rgba(232, 0, 77, 0.13) 0%, transparent 70%)',
-                animation: 'blob 10s ease-in-out infinite',
-              }}
-            />
-            {/* Blob 2: bottom-left, 400px, animation 14s reverse */}
-            <div
-              className="blob bottom-0 left-0 w-[400px] h-[400px]"
-              style={{
-                background: 'radial-gradient(circle, rgba(244, 167, 195, 0.13) 0%, transparent 70%)',
-                animation: 'blob 14s ease-in-out infinite reverse',
-              }}
-            />
-            {/* Blob 3: center, 500px, animation 16s */}
-            <div
-              className="blob top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px]"
-              style={{
-                background: 'radial-gradient(circle, rgba(244, 167, 195, 0.08) 0%, transparent 70%)',
-                animation: 'blob 16s ease-in-out infinite',
-              }}
-            />
-          </div>
-          {children}
-        </Providers>
+      <body className={`${inter.className} bg-mesh-light antialiased`}>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

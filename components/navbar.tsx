@@ -2,36 +2,18 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, Sun, Moon, Search, Menu, X, Sparkles, Heart, User, Shield } from 'lucide-react';
+import { ShoppingBag, Sun, Moon, Search, Menu, X, Sparkles, Heart } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useCartStore } from '@/lib/store';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { useDjangoAuth } from '@/components/django-auth-provider';
 
 const NAV_LINKS = [
-  { label: 'Skincare', href: '/shop/skincare' },
-  { label: 'Makeup', href: '/shop/makeup' },
-  { label: 'Fragrance', href: '/shop/fragrance' },
-  { label: 'Wellness', href: '/shop/wellness' },
-  { label: 'Nouveautés', href: '/shop/new' },
-];
-
-const SEARCH_PRODUCTS = [
-  { id: '1', name: 'Sérum Éclat Hyaluronique', category: 'Skincare', href: '/shop/skincare' },
-  { id: '2', name: 'Crème Velours Nuit', category: 'Skincare', href: '/shop/skincare' },
-  { id: '3', name: 'Gel Nettoyant Doux', category: 'Skincare', href: '/shop/skincare' },
-  { id: '4', name: 'Masque Détox Argile', category: 'Skincare', href: '/shop/skincare' },
-  { id: '5', name: 'Huile Précieuse Rose', category: 'Skincare', href: '/shop/skincare' },
-  { id: '6', name: 'Rouge à Lèvres Velours', category: 'Makeup', href: '/shop/makeup' },
-  { id: '7', name: 'Fond de Teint Lumineux', category: 'Makeup', href: '/shop/makeup' },
-  { id: '8', name: 'Palette Ombres à Paupières', category: 'Makeup', href: '/shop/makeup' },
-  { id: '9', name: 'Mascara Volume Extrême', category: 'Makeup', href: '/shop/makeup' },
-  { id: '10', name: 'Parfum Rose Éternelle', category: 'Parfum', href: '/shop/fragrance' },
-  { id: '11', name: 'Parfum Bois Mystique', category: 'Parfum', href: '/shop/fragrance' },
-  { id: '12', name: 'Huile de Massage Relaxante', category: 'Wellness', href: '/shop/wellness' },
-  { id: '13', name: 'Bain Moussant Lavande', category: 'Wellness', href: '/shop/wellness' },
-  { id: '14', name: 'Bougie Parfumée Zen', category: 'Wellness', href: '/shop/wellness' },
+  { label: 'Skincare', href: '#skincare' },
+  { label: 'Makeup', href: '#makeup' },
+  { label: 'Fragrance', href: '#fragrance' },
+  { label: 'Wellness', href: '#wellness' },
+  { label: 'Nouveautés', href: '#new' },
 ];
 
 export function Navbar() {
@@ -44,14 +26,6 @@ export function Navbar() {
   const itemCount = useCartStore((s) => s.itemCount());
   const setCartOpen = useCartStore((s) => s.setOpen);
   const searchRef = useRef<HTMLInputElement>(null);
-  const { user, isAdmin } = useDjangoAuth();
-
-  const filteredProducts = searchQuery
-    ? SEARCH_PRODUCTS.filter(product =>
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.category.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : [];
 
   useEffect(() => {
     setMounted(true);
@@ -79,14 +53,10 @@ export function Navbar() {
           }}
           transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
           className={cn(
-            'glass-frosted relative flex items-center justify-between',
+            'glass-navbar relative flex items-center justify-between',
             'px-5 py-3 rounded-3xl transition-all duration-500',
             scrolled ? 'py-2.5' : 'py-3.5'
           )}
-          style={{
-            backdropFilter: scrolled ? 'blur(24px) saturate(200%)' : 'blur(8px)',
-            borderBottom: scrolled ? '1px solid rgba(232, 0, 77, 0.12)' : 'none',
-          }}
         >
           {/* Shine overlay */}
           <div className="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none">
@@ -98,16 +68,16 @@ export function Navbar() {
             <motion.div
               whileHover={{ rotate: 20, scale: 1.1 }}
               transition={{ type: 'spring', stiffness: 400 }}
-              className="w-8 h-8 rounded-full flex items-center justify-center"
+              className="w-8 h-8 rounded-xl flex items-center justify-center"
               style={{
-                background: 'linear-gradient(135deg, #E8004D 0%, #F4A7C3 100%)',
-                boxShadow: '0 0 16px rgba(232, 0, 77, 0.40)',
+                background: 'linear-gradient(135deg, #f9a8d4 0%, #f43f5e 100%)',
+                boxShadow: '0 4px 12px rgba(244, 63, 94, 0.35)',
               }}
             >
               <Sparkles className="w-4 h-4 text-white" />
             </motion.div>
-            <span className="font-display font-bold text-xl tracking-tight">
-              Glow <span className="italic" style={{ color: '#F4A7C3' }}>Beauty</span>
+            <span className="font-display font-bold text-xl text-gradient tracking-tight">
+              Glow Beauty
             </span>
           </Link>
 
@@ -118,13 +88,14 @@ export function Navbar() {
                 key={link.label}
                 href={link.href}
                 className={cn(
-                  'relative px-3.5 py-1.5 text-sm font-medium rounded-full',
-                  'text-foreground/75 hover:text-foreground dark:text-white/75 dark:hover:text-white',
-                  'transition-all duration-200 hover:bg-white/8 dark:hover:bg-white/8',
+                  'relative px-3.5 py-1.5 text-sm font-medium rounded-xl',
+                  'text-foreground/70 hover:text-foreground',
+                  'transition-all duration-200 hover:bg-white/30 dark:hover:bg-white/8',
                   'group'
                 )}
               >
                 {link.label}
+                <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-0 h-0.5 rounded-full bg-primary group-hover:w-3/4 transition-all duration-300" />
               </Link>
             ))}
           </div>
@@ -132,126 +103,67 @@ export function Navbar() {
           {/* Actions */}
           <div className="flex items-center gap-1.5">
             {/* Search */}
-            <div className="relative">
-              <AnimatePresence mode="wait">
-                {searchOpen ? (
-                  <motion.div
-                    key="search-input"
-                    initial={{ width: 0, opacity: 0 }}
-                    animate={{ width: 280, opacity: 1 }}
-                    exit={{ width: 0, opacity: 0 }}
-                    transition={{ duration: 0.25 }}
-                    className="overflow-hidden"
-                  >
-                    <input
-                      ref={searchRef}
-                      type="text"
-                      id="search-input"
-                      name="search"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      onBlur={() => { setTimeout(() => { if (!searchQuery) setSearchOpen(false); }, 200); }}
-                      placeholder="Rechercher..."
-                      className="w-full bg-white/40 dark:bg-white/8 backdrop-blur-sm border border-foreground/50 dark:border-white/12 rounded-xl px-3 py-1.5 text-sm outline-none focus:border-primary/40 text-foreground placeholder:text-foreground/40"
-                    />
-                  </motion.div>
-                ) : (
-                  <NavIconButton key="search-btn" onClick={() => setSearchOpen(true)} label="Rechercher">
-                    <Search className="w-4 h-4" />
-                  </NavIconButton>
-                )}
-              </AnimatePresence>
-
-              {/* Search results dropdown */}
-              <AnimatePresence>
-                {searchOpen && filteredProducts.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="absolute top-full right-0 mt-2 w-80 glass-frosted rounded-2xl p-2 shadow-xl z-50"
-                  >
-                    {filteredProducts.map((product) => (
-                      <Link
-                        key={product.id}
-                        href={product.href}
-                        onClick={() => {
-                          setSearchOpen(false);
-                          setSearchQuery('');
-                        }}
-                        className="block px-3 py-2 rounded-xl hover:bg-foreground/5 transition-colors"
-                      >
-                        <div className="text-sm font-medium text-foreground">{product.name}</div>
-                        <div className="text-xs text-foreground/60">{product.category}</div>
-                      </Link>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* Theme Toggle - Neumorphic */}
-            {mounted && (
-              <button
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className={cn(
-                  'neumorphic-toggle',
-                  theme === 'light' ? 'light' : 'dark'
-                )}
-                aria-label="Changer le thème"
-              >
-                <div className={cn(
-                  'neumorphic-thumb',
-                  theme === 'light' ? 'light' : 'dark'
-                )}>
-                  {theme === 'light' ? (
-                    <Sun className="w-4 h-4" style={{ color: '#E8004D' }} />
-                  ) : (
-                    <Moon className="w-4 h-4 text-foreground dark:text-white" />
-                  )}
-                </div>
-              </button>
-            )}
+            <AnimatePresence mode="wait">
+              {searchOpen ? (
+                <motion.div
+                  key="search-input"
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: 180, opacity: 1 }}
+                  exit={{ width: 0, opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="overflow-hidden"
+                >
+                  <input
+                    ref={searchRef}
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onBlur={() => { if (!searchQuery) setSearchOpen(false); }}
+                    placeholder="Rechercher..."
+                    className="w-full bg-white/40 dark:bg-white/8 backdrop-blur-sm border border-white/50 dark:border-white/12 rounded-xl px-3 py-1.5 text-sm outline-none focus:border-primary/40 text-foreground placeholder:text-foreground/40"
+                  />
+                </motion.div>
+              ) : (
+                <NavIconButton key="search-btn" onClick={() => setSearchOpen(true)} label="Rechercher">
+                  <Search className="w-4 h-4" />
+                </NavIconButton>
+              )}
+            </AnimatePresence>
 
             {/* Wishlist */}
-            <Link href="/account/wishlist">
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="hidden md:flex w-10 h-10 rounded-full items-center justify-center glass-frosted text-foreground/70 hover:text-foreground transition-colors"
-              >
-                <Heart className="w-5 h-5" />
-              </motion.button>
-            </Link>
+            <NavIconButton onClick={() => {}} label="Favoris" className="hidden sm:flex">
+              <Heart className="w-4 h-4" />
+            </NavIconButton>
 
-            {/* Profile */}
-            <Link href="/account" className="relative">
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="hidden md:flex w-10 h-10 rounded-full items-center justify-center glass-frosted text-foreground/70 hover:text-foreground transition-colors"
+            {/* Theme Toggle */}
+            {mounted && (
+              <NavIconButton
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                label="Changer le thème"
               >
-                <User className="w-5 h-5" />
-              </motion.button>
-              {isAdmin && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-rose-500 flex items-center justify-center"
-                >
-                  <Shield className="w-3 h-3 text-white" />
-                </motion.div>
-              )}
-            </Link>
+                <AnimatePresence mode="wait">
+                  {theme === 'dark' ? (
+                    <motion.div key="sun" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                      <Sun className="w-4 h-4" />
+                    </motion.div>
+                  ) : (
+                    <motion.div key="moon" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                      <Moon className="w-4 h-4" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </NavIconButton>
+            )}
 
             {/* Cart */}
             <motion.button
-              whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(232, 0, 77, 0.55)' }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setCartOpen(true)}
-              className="relative flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-1.5 rounded-full text-sm font-semibold text-white"
+              className="relative flex items-center gap-2 px-4 py-1.5 rounded-2xl text-sm font-semibold text-white"
               style={{
-                background: '#E8004D',
+                background: 'linear-gradient(135deg, #f472b6 0%, #f43f5e 100%)',
+                boxShadow: '0 4px 16px rgba(244, 63, 94, 0.35), inset 0 1px 0 rgba(255,255,255,0.2)',
               }}
             >
               <ShoppingBag className="w-4 h-4" />
@@ -301,7 +213,7 @@ export function Navbar() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.97 }}
               transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-              className="absolute top-full left-4 right-4 mt-2 glass-frosted rounded-3xl p-4 md-hidden backdrop-blur-xl saturate-200"
+              className="absolute top-full left-4 right-4 mt-2 glass-navbar rounded-3xl p-4 md:hidden"
             >
               {NAV_LINKS.map((link, i) => (
                 <motion.div
@@ -313,42 +225,12 @@ export function Navbar() {
                   <Link
                     href={link.href}
                     onClick={() => setMobileOpen(false)}
-                    className="block px-4 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground dark:text-white/80 dark:hover:text-white rounded-full hover:bg-white/8 dark:hover:bg-white/8 transition-all"
+                    className="block px-4 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground rounded-xl hover:bg-white/30 dark:hover:bg-white/8 transition-all"
                   >
                     {link.label}
                   </Link>
                 </motion.div>
               ))}
-              
-              <div className="h-px bg-foreground/10 my-2 mx-4" />
-              
-              <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: NAV_LINKS.length * 0.06 }}
-              >
-                <Link
-                  href="/account"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground dark:text-white/80 dark:hover:text-white rounded-full hover:bg-white/8 dark:hover:bg-white/8 transition-all"
-                >
-                  <User className="w-4 h-4" /> Mon profil
-                </Link>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: (NAV_LINKS.length + 1) * 0.06 }}
-              >
-                <Link
-                  href="/account/wishlist"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground dark:text-white/80 dark:hover:text-white rounded-full hover:bg-white/8 dark:hover:bg-white/8 transition-all"
-                >
-                  <Heart className="w-4 h-4" /> Ma liste d'envies
-                </Link>
-              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>

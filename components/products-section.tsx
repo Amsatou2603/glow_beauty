@@ -17,11 +17,9 @@ const CATEGORIES = [
 
 interface ProductsSectionProps {
   products: Product[];
-  onEditProduct?: (product: Product) => void;
-  onDeleteProduct?: (productId: string) => void;
 }
 
-export function ProductsSection({ products, onEditProduct, onDeleteProduct }: ProductsSectionProps) {
+export function ProductsSection({ products }: ProductsSectionProps) {
   const [activeCategory, setActiveCategory] = useState('all');
 
   const filtered = activeCategory === 'all'
@@ -92,13 +90,7 @@ export function ProductsSection({ products, onEditProduct, onDeleteProduct }: Pr
           className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5"
         >
           {filtered.map((product, i) => (
-            <ProductCard 
-              key={product.id} 
-              product={product} 
-              index={i} 
-              onEdit={onEditProduct}
-              onDelete={onDeleteProduct}
-            />
+            <ProductCard key={product.id} product={product} index={i} />
           ))}
         </motion.div>
       </AnimatePresence>

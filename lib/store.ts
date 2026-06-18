@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
 
 export interface Product {
   id: string;
@@ -16,7 +16,6 @@ export interface Product {
   ingredients?: string;
   is_new?: boolean;
   is_bestseller?: boolean;
-  in_stock?: boolean;
 }
 
 export interface CartItem extends Product {
@@ -55,9 +54,8 @@ export const useCartStore = create<CartStore>()(
         });
       },
 
-      removeItem: (id) => {
-        set((state) => ({ items: state.items.filter((i) => i.id !== id) }));
-      },
+      removeItem: (id) =>
+        set((state) => ({ items: state.items.filter((i) => i.id !== id) })),
 
       updateQuantity: (id, quantity) => {
         if (quantity <= 0) {
@@ -69,19 +67,12 @@ export const useCartStore = create<CartStore>()(
         }));
       },
 
-      clearCart: () => {
-        set({ items: [] });
-      },
-      
+      clearCart: () => set({ items: [] }),
       setOpen: (open) => set({ isOpen: open }),
 
       total: () => get().items.reduce((sum, i) => sum + i.price * i.quantity, 0),
       itemCount: () => get().items.reduce((sum, i) => sum + i.quantity, 0),
     }),
-    {
-      name: 'glow-beauty-cart',
-      storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ items: state.items }),
-    }
+    { name: 'glow-beauty-cart' }
   )
 );
